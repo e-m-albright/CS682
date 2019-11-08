@@ -8,7 +8,8 @@ Can we predict the percieved entity from brain activity patterns for the passive
 * https://openneuro.org/datasets/ds000157/versions/00001
 * https://github.com/OpenNeuroDatasets/ds000157
 
-```mkdir data
+```
+mkdir data
 aws s3 sync --no-sign-request s3://openneuro.org/ds000157 data/ds000157/
 ```
 (beats the alternatives, and the complicated datalad thing)
