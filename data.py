@@ -154,7 +154,7 @@ def get_all_subject_data(layout: BIDSLayout):
         T1w_image, bold_image, events = _get_subject_data(layout, subject)
 
         data.append(
-            (T1w_image.get_image(), bold_image.get_image(), events.get_df()),
+            (subject, T1w_image.get_image(), bold_image.get_image(), events.get_df()),
         )
 
     return data
@@ -185,9 +185,21 @@ def get_scan_assignments(num_scans: int, events: pd.DataFrame):
     return assignments
 
 
-def get_machine_learning_data(layout: BIDSLayout = None):
+def get_machine_learning_data(layout: BIDSLayout = None, limit: int = 3):
     """
     Get brain scans as labeled data, partitioned into Train, Validate, and Test
+
+    :param layout: optional, supply if you already have a layout on hand
+    :param limit: I'm figuring out some memory constraints, the data if mishandled can exceed memory
+    :return: X,y splits corresponding to train/validate/test roles
+
+    TODO how am I going to cope with the memory issue?
+    64 * 64 * 30 = Per TimeStep (122,880)
+
+    dtype is <f4, for little endian, 4 bit float
+    TS * 4 = 491,520 bits per ts or 61.44 kB
+
+    we have ~364 * 30 TS which is about 670.9248 mB
     """
     np.random.seed(2019)
 
@@ -197,8 +209,10 @@ def get_machine_learning_data(layout: BIDSLayout = None):
     subject_data = get_all_subject_data(layout)
 
     data = []
-    for _t1, b, e in subject_data[0:1]:
+    for s, _t1, b, e in subject_data[:limit]:
+        print("Assigning data from subject {}".format(s))
         image_data = b.get_data()
+        print(b.get_data_dtype)
         num_scans = image_data.shape[-1]
 
         # print("Total number of scans: ", num_scans)
