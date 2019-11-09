@@ -185,13 +185,14 @@ def get_scan_assignments(num_scans: int, events: pd.DataFrame):
     return assignments
 
 
-def get_machine_learning_data():
+def get_machine_learning_data(layout: BIDSLayout = None):
     """
     Get brain scans as labeled data, partitioned into Train, Validate, and Test
     """
     np.random.seed(2019)
 
-    layout = get_food_temptation_data()
+    if layout is None:
+        layout = get_food_temptation_data()
 
     subject_data = get_all_subject_data(layout)
 
@@ -200,9 +201,9 @@ def get_machine_learning_data():
         image_data = b.get_data()
         num_scans = image_data.shape[-1]
 
-        print("Total number of scans: ", num_scans)
+        # print("Total number of scans: ", num_scans)
         scan_assignments = get_scan_assignments(num_scans, e)
-        print(list("{}: {}".format(k, len(v)) for k, v in scan_assignments.items()))
+        # print(list("{}: {}".format(k, len(v)) for k, v in scan_assignments.items()))
 
         # Gather our classification examples
         # Ignore break / unassigned for now
