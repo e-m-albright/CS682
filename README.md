@@ -5,10 +5,20 @@ UMass Amherst CS682 Neural Networks Final Project
 Can we predict the percieved entity from brain activity patterns for the passive viewing task?
 
 ### Data
-* https://openneuro.org/datasets/ds000157/versions/00001
-* https://github.com/OpenNeuroDatasets/ds000157
+
+##### Citation
+Smeets PA, Kroese FM, Evers C, de Ridder DT.
+Behav Brain Res. 2013 Jul 1;248:41-5. doi: 10.1016/j.bbr.2013.03.041. Epub 2013 Apr 8.
+http://www.ncbi.nlm.nih.gov/pubmed/23578759
+
+Full paper
+https://pdfs.semanticscholar.org/e18e/fa2271db963956c35ce1cb8e5b58737dd6f1.pdf
+##### Sources
+* (openneuro) https://openneuro.org/datasets/ds000157/versions/00001
+* (datalad) https://github.com/OpenNeuroDatasets/ds000157
 
 ```
+# To download from openneuro
 mkdir data
 aws s3 sync --no-sign-request s3://openneuro.org/ds000157 data/ds000157/
 ```
@@ -23,7 +33,21 @@ add dvc? (not a bad idea potentially, beats the aws usage)
 
 ```
 pip install pybids
+pip install nibabel
+pip install nilearn
 pip install torch
 pip install medicaltorch
 pip install torchvision
 ```
+
+## TODO MILESTONE
+2 - 3 pages using the provided template. 
+
+The following is a suggested structure for your report:
+* Title, Author(s)
+* Introduction: this section introduces your problem, and the overall plan for approaching your problem
+* Problem statement: Describe your problem precisely specifying the dataset to be used, expected results and evaluation
+* Technical Approach: Describe the methods you intend to apply to solve the given problem
+* Intermediate/Preliminary Results: State and evaluate your results upto the milestone
+
+Please upload a PDF file named (your ID)_milestone.pdf to Gradescope.
