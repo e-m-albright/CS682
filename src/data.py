@@ -185,12 +185,13 @@ def get_scan_assignments(num_scans: int, events: pd.DataFrame):
     return assignments
 
 
-def get_machine_learning_data(layout: BIDSLayout = None, limit: int = 3):
+def get_machine_learning_data(layout: BIDSLayout = None, limit: int = 3, flat: bool = True):
     """
     Get brain scans as labeled data, partitioned into Train, Validate, and Test
 
     :param layout: optional, supply if you already have a layout on hand
-    :param limit: I'm figuring out some memory constraints, the data if mishandled can exceed memory
+    :param limit: TODO I'm figuring out some memory constraints, the data if mishandled can exceed memory
+    :param flat: TODO if I want to figure out how to not flatten the data to use it, could be fun, and cool to convolve
     :return: X,y splits corresponding to train/validate/test roles
 
     TODO how am I going to cope with the memory issue?
@@ -212,7 +213,6 @@ def get_machine_learning_data(layout: BIDSLayout = None, limit: int = 3):
     for s, _t1, b, e in subject_data[:limit]:
         print("Assigning data from subject {}".format(s))
         image_data = b.get_data()
-        print(b.get_data_dtype)
         num_scans = image_data.shape[-1]
 
         # print("Total number of scans: ", num_scans)
@@ -240,11 +240,17 @@ def get_machine_learning_data(layout: BIDSLayout = None, limit: int = 3):
          int(.9 * len(index_df))])
 
     # TODO Is it concerning there's a stray newaxis at the end of the indexing?
-    X_train = scans[:, :, :, train_ix].squeeze()
+    X_train = scans[:, :, :, train_ix].squeeze().T
     y_train = labels[train_ix].squeeze()
-    X_val = scans[:, :, :, validate_ix].squeeze()
+    X_val = scans[:, :, :, validate_ix].squeeze().T
     y_val = labels[validate_ix].squeeze()
-    X_test = scans[:, :, :, test_ix].squeeze()
+    X_test = scans[:, :, :, test_ix].squeeze().T
     y_test = labels[test_ix].squeeze()
+
+    if flat:
+        features = np.prod(scans.shape[:-1])
+        X_train = X_train.reshape(X_train.shape[0], features)
+        X_val = X_val.reshape(X_val.shape[0], features)
+        X_test = X_test.reshape(X_test.shape[0], features)
 
     return X_train, y_train, X_val, y_val, X_test, y_test
