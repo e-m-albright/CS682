@@ -19,7 +19,7 @@ def test_ml_data(limit: int = 300):
     svc = SVC(kernel='linear', C=1.)
     print("Training SVC model on {} scans".format(limit))
     svc.fit(X_train[:limit], y_train[:limit])
-    
+
     print("Predicting using SVC model")
     metrics = precision_recall_fscore_support(y_val, svc.predict(X_val))
     results = pd.DataFrame(

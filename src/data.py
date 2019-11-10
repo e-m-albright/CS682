@@ -9,6 +9,8 @@ import numpy as np
 from bids import BIDSLayout
 
 
+DATASET_PATH = os.path.join("..", "data", "ds000157")
+
 # from the paper, time in seconds each scan covers
 SCAN_TIME = 1.6 + 0.023  # time plus echo time
 USEFUL_SCANS = 370  # from the description of the t2-weighted scans, supposedly there's 370 unless that's a typo
@@ -18,12 +20,10 @@ def get_food_temptation_data() -> BIDSLayout:
     """
     This project is hardcoded to work with this specific OpenNeuro dataset
     """
-    ds_path = os.path.join("data", "ds000157")
-    print("Using dataset path: \"{}\"".format(ds_path))
+    print("Using dataset path: \"{}\"".format(DATASET_PATH))
+    layout = BIDSLayout(DATASET_PATH)
 
-    layout = BIDSLayout(ds_path)
     print(layout)
-
     return layout
 
 
