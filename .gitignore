@@ -5,6 +5,19 @@
 # Data files
 data/
 
+# Output
+out/
+
+# Paper files
+# Not mine to share
+source_paper.pdf
+# Generated files
+paper/*.log
+paper/*.pdf
+paper/*.synctex.gz
+paper/*.aux
+paper/*.blg
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

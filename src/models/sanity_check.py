@@ -5,12 +5,14 @@ import pandas as pd
 from sklearn.metrics import precision_recall_fscore_support
 from sklearn.svm import SVC
 
+from bids import BIDSLayout
+
 from src import data
 
 
-def test_ml_data(limit: int = 300):
+def test_ml_data(layout: BIDSLayout = None, limit: int = 300):
 
-    ml_dataset = data.get_ml_dataset()
+    ml_dataset = data.get_ml_dataset(layout=layout)
     print("Data gathered")
     print(ml_dataset)
     ml_dataset.normalize()
@@ -28,7 +30,5 @@ def test_ml_data(limit: int = 300):
         columns=['food', 'nonfood'],
         index=['precision', 'recall', 'fscore', 'support']
     )
-
-    # TODO bother with test? meh
 
     return results

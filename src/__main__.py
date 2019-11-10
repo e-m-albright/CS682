@@ -1,6 +1,16 @@
 """
 TODO
-1.
+
+Awesome!
+
+Some TODO's to work on in the future
+- More subjects (memory management)
+- Cut timesteps that could either belong to one event or another (boundary dispute) as I'm not 100% confident in event assignment
+
+- Deep learn, VGG
+- Find convolution on non flattened image (3d convolution could get brain regions better?)
+
+- Review HW for good ideas in training, data manipulation, etc
 """
 
 import os

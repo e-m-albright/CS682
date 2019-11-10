@@ -12,8 +12,10 @@ from bids import BIDSLayout
 DATASET_PATH = os.path.join("data", "ds000157")
 
 # from the paper, time in seconds each scan covers
-SCAN_TIME = 1.6 + 0.023  # time plus echo time
+SCAN_TIME = 1.6  # I believe the 0.023 echo time is contained within total time
 USEFUL_SCANS = 370  # from the description of the t2-weighted scans, supposedly there's 370 unless that's a typo
+
+TVT_SPLITS = (0.7, 0.9)
 
 
 class MLDataset:
@@ -66,12 +68,12 @@ class MLDataset:
         self._flattened = True
 
 
-def get_food_temptation_data() -> BIDSLayout:
+def get_food_temptation_data(dataset_path: str = DATASET_PATH) -> BIDSLayout:
     """
     This project is hardcoded to work with this specific OpenNeuro dataset
     """
-    print("Using dataset path: \"{}\"".format(DATASET_PATH))
-    layout = BIDSLayout(DATASET_PATH)
+    print("Using dataset path: \"{}\"".format(dataset_path))
+    layout = BIDSLayout(dataset_path)
 
     print(layout)
     return layout
@@ -168,6 +170,23 @@ def get_subject_data(layout: BIDSLayout, subject: str):
     flip angle = 72.5◦, FOV= 208 × 119 × 256 mm, SENSE factor AP = 2.4, 30 axial
     3.6 mm slices with 0.4 mm gap, reconstructed voxel size = 4 mm × 4 mm × 4 mm).
     In one functional run 370 scans were made (∼10 min). 
+    
+    During the functional run, stimuli were presented on a screen...
+    
+    B is the T2-weighted, 
+    64 (either SAGITAL/CORONAL) 
+      x 64 (other of SAGITAL/CORONAL) 
+      x 30 (axial/horizontal, accounts for verticallity) 
+      x 370-375 (scans, accounts for TIME)
+      
+    The functional volumes of every subject were realigned to the first
+    volume of the first run, globally normalized to Montreal Neurological Institute space
+    (MNI space) retaining 4 mm × 4 mm × 4 mm voxels, and spatially smoothed with a
+    gaussian kernel of 8 mm full width at half maximum. A statistical parametric map
+    was generated for every subject by fitting a boxcar function to each time series, 
+    convolved with the canonical hemodynamic response function. Data were high-pass
+    filtered with a cutoff of 128 s. Three conditions were modeled: viewing foods, 
+    viewing non-foods and the half-way break.
     """
     bold_images = layout.get(
         datatype='func',
@@ -180,6 +199,13 @@ def get_subject_data(layout: BIDSLayout, subject: str):
     bold_image = bold_images[0]
 
     # Get the classification truths
+    """
+    During scanning, subjects alternately viewed 24 s blocks of palatable food
+    images (8 blocks) and non-food images (i.e., office utensils; 8 blocks), interspersed
+    with 8–16 s rest blocks showing a crosshair (12 s on average). Halfway the task there
+    was a 10 s break. In the image blocks, 8 images were presented for 2.5 s each with a
+    0.5 s inter-stimulus interval. A
+    """
     found_events = layout.get(
         datatype='func',
         subject=subject,
@@ -231,18 +257,19 @@ def get_scan_assignments(num_scans: int, events: pd.DataFrame) -> dict:
     return assignments
 
 
-def get_ml_dataset(layout: BIDSLayout = None, limit: int = 3) -> MLDataset:
+def get_ml_dataset(layout: BIDSLayout = None, limit: int = 3, splits=TVT_SPLITS) -> MLDataset:
     """
     Get brain scans as labeled data, partitioned into Train, Validate, and Test
 
     :param layout: optional, supply if you already have a layout on hand
     :param limit: TODO I'm figuring out some memory constraints, the data if mishandled can exceed memory
-    :return: X,y splits corresponding to train/validate/test roles
+    :param splits: The proportions of train and validation (test is inferred) to split up
+    :return: MLDataset class wrapping the data splits
 
     TODO how am I going to cope with the memory issue?
     64 * 64 * 30 = Per TimeStep (122,880)
 
-    dtype is <f4, for little endian, 4 bit float
+    dtype is <f4, for little endian, 4 bit float (Did I see it was float32 at one point?)
     TS * 4 = 491,520 bits per ts or 61.44 kB
 
     we have ~364 * 30 TS which is about 670.9248 mB
@@ -281,8 +308,8 @@ def get_ml_dataset(layout: BIDSLayout = None, limit: int = 3) -> MLDataset:
     index_df = pd.DataFrame(data=np.arange(len(data)), columns=["data_index"])
     train_ix, validate_ix, test_ix = np.split(
         index_df.sample(frac=1),
-        [int(.7 * len(index_df)),
-         int(.9 * len(index_df))])
+        [int(splits[0] * len(index_df)),
+         int(splits[1] * len(index_df))])
 
     # TODO Is it concerning there's a stray newaxis at the end of the indexing?
     X_train = scans[:, :, :, train_ix].squeeze().T
