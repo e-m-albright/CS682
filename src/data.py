@@ -1,5 +1,5 @@
 """
-Set up
+Data accessors for our chosen experimental data centered on neuro-imaging brain scans
 """
 import os
 import pandas as pd
@@ -9,11 +9,61 @@ import numpy as np
 from bids import BIDSLayout
 
 
-DATASET_PATH = os.path.join("..", "data", "ds000157")
+DATASET_PATH = os.path.join("data", "ds000157")
 
 # from the paper, time in seconds each scan covers
 SCAN_TIME = 1.6 + 0.023  # time plus echo time
 USEFUL_SCANS = 370  # from the description of the t2-weighted scans, supposedly there's 370 unless that's a typo
+
+
+class MLDataset:
+    def __init__(self,
+                 X_train, y_train,
+                 X_val, y_val,
+                 X_test, y_test):
+        self.X_train = X_train
+        self.y_train = y_train
+        self.X_val = X_val
+        self.y_val = y_val
+        self.X_test = X_test
+        self.y_test = y_test
+
+        self.mean_image = np.mean(self.X_train, axis=0)
+
+        self._normalized = False
+        self._flattened = False
+
+    def __repr__(self):
+        return "{} | Features: {}  | Train: {} | Validation: {} | Test: {}".format(
+            MLDataset.__name__,
+            self.X_train.shape[1:],
+            self.X_train.shape[0],
+            self.X_val.shape[0],
+            self.X_test.shape[0],
+        )
+
+    def normalize(self):
+        if self._normalized:
+            return
+
+        # Subtract the mean training image
+        self.X_train -= self.mean_image
+        self.X_val -= self.mean_image
+        self.X_test -= self.mean_image
+
+        self._normalized = True
+
+    def flatten(self):
+        if self._flattened:
+            return
+
+        features = np.prod(self.X_train.shape[1:])
+        self.X_train = self.X_train.reshape(self.X_train.shape[0], features)
+        self.X_val = self.X_val.reshape(self.X_val.shape[0], features)
+        self.X_test = self.X_test.reshape(self.X_test.shape[0], features)
+        # self.mean_image = self.mean_image.reshape(self.mean_image.shape[0], features)
+
+        self._flattened = True
 
 
 def get_food_temptation_data() -> BIDSLayout:
@@ -90,7 +140,7 @@ def display_subject_details(layout: BIDSLayout):
     print(df_a.head())
 
 
-def _get_subject_data(layout: BIDSLayout, subject: str):
+def get_subject_data(layout: BIDSLayout, subject: str):
     """
     Gathers subject specific experimental data
     """
@@ -140,8 +190,7 @@ def _get_subject_data(layout: BIDSLayout, subject: str):
     assert len(found_events) == 1, "Bad data read"
     events = found_events[0]
 
-    # TODO something.tags looked interesting
-    return T1w_image, bold_image, events
+    return T1w_image.get_image(), bold_image.get_image(), events.get_df()
 
 
 def get_all_subject_data(layout: BIDSLayout):
@@ -151,16 +200,12 @@ def get_all_subject_data(layout: BIDSLayout):
     data = []
 
     for subject in layout.get_subjects():
-        T1w_image, bold_image, events = _get_subject_data(layout, subject)
-
-        data.append(
-            (subject, T1w_image.get_image(), bold_image.get_image(), events.get_df()),
-        )
+        data.append((subject, *get_subject_data(layout, subject)),)
 
     return data
 
 
-def get_scan_assignments(num_scans: int, events: pd.DataFrame):
+def get_scan_assignments(num_scans: int, events: pd.DataFrame) -> dict:
     assignments = {
         "food": [],
         "nonfood": [],
@@ -168,6 +213,7 @@ def get_scan_assignments(num_scans: int, events: pd.DataFrame):
         "unassigned": [],
     }
 
+    # TODO a little slow, and seems like there's only 2 assignments shared across the whole set
     for timestep in range(num_scans):
 
         estimated_time = timestep * SCAN_TIME  # should be either 1600ms or 1623ms
@@ -185,13 +231,12 @@ def get_scan_assignments(num_scans: int, events: pd.DataFrame):
     return assignments
 
 
-def get_machine_learning_data(layout: BIDSLayout = None, limit: int = 3, flat: bool = True):
+def get_ml_dataset(layout: BIDSLayout = None, limit: int = 3) -> MLDataset:
     """
     Get brain scans as labeled data, partitioned into Train, Validate, and Test
 
     :param layout: optional, supply if you already have a layout on hand
     :param limit: TODO I'm figuring out some memory constraints, the data if mishandled can exceed memory
-    :param flat: TODO if I want to figure out how to not flatten the data to use it, could be fun, and cool to convolve
     :return: X,y splits corresponding to train/validate/test roles
 
     TODO how am I going to cope with the memory issue?
@@ -247,10 +292,8 @@ def get_machine_learning_data(layout: BIDSLayout = None, limit: int = 3, flat: b
     X_test = scans[:, :, :, test_ix].squeeze().T
     y_test = labels[test_ix].squeeze()
 
-    if flat:
-        features = np.prod(scans.shape[:-1])
-        X_train = X_train.reshape(X_train.shape[0], features)
-        X_val = X_val.reshape(X_val.shape[0], features)
-        X_test = X_test.reshape(X_test.shape[0], features)
-
-    return X_train, y_train, X_val, y_val, X_test, y_test
+    return MLDataset(
+        X_train, y_train,
+        X_val, y_val,
+        X_test, y_test,
+    )
