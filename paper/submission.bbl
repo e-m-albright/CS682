@@ -1,29 +1,40 @@
 \begin{thebibliography}{1}\itemsep=-1pt
 
-\bibitem{Alpher02}
-A.~Alpher.
-\newblock Frobnication.
-\newblock {\em Journal of Foo}, 12(1):234--778, 2002.
+\bibitem{akkus2017deep}
+Z.~Akkus, A.~Galimzianova, A.~Hoogi, D.~L. Rubin, and B.~J. Erickson.
+\newblock Deep learning for brain mri segmentation: state of the art and future
+  directions.
+\newblock {\em Journal of digital imaging}, 30(4):449--459, 2017.
 
-\bibitem{Alpher03}
-A.~Alpher and J.~P.~N. Fotheringham-Smythe.
-\newblock Frobnication revisited.
-\newblock {\em Journal of Foo}, 13(1):234--778, 2003.
+\bibitem{henschel2019fastsurfer}
+L.~Henschel, S.~Conjeti, S.~Estrada, K.~Diers, B.~Fischl, and M.~Reuter.
+\newblock Fastsurfer--a fast and accurate deep learning based neuroimaging
+  pipeline.
+\newblock {\em arXiv preprint arXiv:1910.03866}, 2019.
 
-\bibitem{Alpher04}
-A.~Alpher, J.~P.~N. Fotheringham-Smythe, and G.~Gamow.
-\newblock Can a machine frobnicate?
-\newblock {\em Journal of Foo}, 14(1):234--778, 2004.
+\bibitem{payan2015predicting}
+A.~Payan and G.~Montana.
+\newblock Predicting alzheimer's disease: a neuroimaging study with 3d
+  convolutional neural networks.
+\newblock {\em arXiv preprint arXiv:1502.02506}, 2015.
 
-\bibitem{Authors14}
-Authors.
-\newblock The frobnicatable foo filter, 2014.
-\newblock Face and Gesture submission ID 324. Supplied as additional material
-  {\tt fg324.pdf}.
+\bibitem{plis2014deep}
+S.~M. Plis, D.~R. Hjelm, R.~Salakhutdinov, E.~A. Allen, H.~J. Bockholt, J.~D.
+  Long, H.~J. Johnson, J.~S. Paulsen, J.~A. Turner, and V.~D. Calhoun.
+\newblock Deep learning for neuroimaging: a validation study.
+\newblock {\em Frontiers in neuroscience}, 8:229, 2014.
 
-\bibitem{Authors14b}
-Authors.
-\newblock Frobnication tutorial, 2014.
-\newblock Supplied as additional material {\tt tr.pdf}.
+\bibitem{shi2018feature}
+S.~Shi and F.~Nathoo.
+\newblock Feature learning and classification in neuroimaging: Predicting
+  cognitive impairment from magnetic resonance imaging.
+\newblock In {\em 2018 4th International Conference on Big Data and Information
+  Analytics (BigDIA)}, pages 1--5. IEEE, 2018.
+
+\bibitem{smeets2013allured}
+P.~A. Smeets, F.~M. Kroese, C.~Evers, and D.~T. de~Ridder.
+\newblock Allured or alarmed: counteractive control responses to food
+  temptations in the brain.
+\newblock {\em Behavioural brain research}, 248:41--45, 2013.
 
 \end{thebibliography}

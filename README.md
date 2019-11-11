@@ -39,15 +39,3 @@ pip install torch
 pip install medicaltorch
 pip install torchvision
 ```
-
-## TODO MILESTONE
-2 - 3 pages using the provided template. 
-
-The following is a suggested structure for your report:
-* Title, Author(s)
-* Introduction: this section introduces your problem, and the overall plan for approaching your problem
-* Problem statement: Describe your problem precisely specifying the dataset to be used, expected results and evaluation
-* Technical Approach: Describe the methods you intend to apply to solve the given problem
-* Intermediate/Preliminary Results: State and evaluate your results upto the milestone
-
-Please upload a PDF file named (your ID)_milestone.pdf to Gradescope.

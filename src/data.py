@@ -174,7 +174,7 @@ def get_subject_data(layout: BIDSLayout, subject: str):
     During the functional run, stimuli were presented on a screen...
     
     B is the T2-weighted, 
-    64 (either SAGITAL/CORONAL) 
+      64 (either SAGITAL/CORONAL) 
       x 64 (other of SAGITAL/CORONAL) 
       x 30 (axial/horizontal, accounts for verticallity) 
       x 370-375 (scans, accounts for TIME)

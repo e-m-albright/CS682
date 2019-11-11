@@ -11,6 +11,9 @@ out/
 # Paper files
 # Not mine to share
 source_paper.pdf
+# Probably don't want to include any PDF's
+*.pdf
+
 # Generated files
 paper/*.log
 paper/*.pdf
