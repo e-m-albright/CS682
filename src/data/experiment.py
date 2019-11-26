@@ -1,21 +1,20 @@
 """
 Data accessors for our chosen experimental data centered on neuro-imaging brain scans
 """
-import os
 import pandas as pd
 import pprint
 
 from bids import BIDSLayout
 
+from src import DATASET_DIR
 
-DATASET_PATH = os.path.join("data", "ds000157")
 
 # from the paper, time in seconds each scan covers
 SCAN_TIME = 1.6  # I believe the 0.023 echo time is contained within total time
 USEFUL_SCANS = 370  # from the description of the t2-weighted scans, supposedly there's 370 unless that's a typo
 
 
-def get_food_temptation_data(dataset_path: str = DATASET_PATH) -> BIDSLayout:
+def get_food_temptation_data(dataset_path: str = DATASET_DIR) -> BIDSLayout:
     """
     This project is hardcoded to work with this specific OpenNeuro dataset
     """

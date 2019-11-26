@@ -4,7 +4,6 @@ Neural Network training and evaluation
 import torch
 from torch.nn import functional as F
 
-from src.args import iargs
 from src.env import device, dtype
 
 
@@ -28,7 +27,7 @@ def accuracy(l, model):
         print('Got %d / %d correct (%.2f)' % (num_correct, num_samples, 100 * acc))
 
 
-def train(model, optimizer, l_train, l_validate, epochs=1):
+def train(model, optimizer, l_train, l_validate, epochs=1, print_every=10):
     """
     Train a model on CIFAR-10 using the PyTorch Module API.
 
@@ -61,7 +60,7 @@ def train(model, optimizer, l_train, l_validate, epochs=1):
             # computed by the backwards pass.
             optimizer.step()
 
-            if t % iargs.print_every == 0:
+            if t % print_every == 0:
                 print('Iteration %d, loss = %.4f' % (t, loss.item()))
                 accuracy(l_validate, model)
                 print()

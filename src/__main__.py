@@ -12,17 +12,11 @@ Some TODO's to work on in the future
 
 - Review HW for good ideas in training, data manipulation, etc
 
-# TODO is this shit from notebooks import errors?
-    # package_dir = os.path.dirname(os.path.realpath(__file__))
-    # parent_dir = os.path.join('..', package_dir)
-    # sys.path.insert(0, parent_dir)
-
 """
-
-from src.args import iargs
 
 
 def run():
+    from src.args import iargs
 
     if iargs.model == "svm":
         from src.models import svm
@@ -32,8 +26,6 @@ def run():
 
     elif iargs.model == "fc":
         from src.models import fc
-
-        # TODO
 
 
 if __name__ == "__main__":
