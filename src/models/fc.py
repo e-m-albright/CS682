@@ -2,6 +2,62 @@
 import torch.nn.functional as F  # useful stateless functions
 
 
+def check_accuracy_part34(loader, model):
+    if loader.dataset.train:
+        print('Checking accuracy on validation set')
+    else:
+        print('Checking accuracy on test set')
+    num_correct = 0
+    num_samples = 0
+    model.eval()  # set model to evaluation mode
+    with torch.no_grad():
+        for x, y in loader:
+            x = x.to(device=device, dtype=dtype)  # move to device, e.g. GPU
+            y = y.to(device=device, dtype=torch.long)
+            scores = model(x)
+            _, preds = scores.max(1)
+            num_correct += (preds == y).sum()
+            num_samples += preds.size(0)
+        acc = float(num_correct) / num_samples
+        print('Got %d / %d correct (%.2f)' % (num_correct, num_samples, 100 * acc))
+
+def train_part34(model, optimizer, epochs=1):
+    """
+    Train a model on CIFAR-10 using the PyTorch Module API.
+
+    Inputs:
+    - model: A PyTorch Module giving the model to train.
+    - optimizer: An Optimizer object we will use to train the model
+    - epochs: (Optional) A Python integer giving the number of epochs to train for
+
+    Returns: Nothing, but prints model accuracies during training.
+    """
+    model = model.to(device=device)  # move the model parameters to CPU/GPU
+    for e in range(epochs):
+        for t, (x, y) in enumerate(loader_train):
+            model.train()  # put model to training mode
+            x = x.to(device=device, dtype=dtype)  # move to device, e.g. GPU
+            y = y.to(device=device, dtype=torch.long)
+
+            scores = model(x)
+            loss = F.cross_entropy(scores, y)
+
+            # Zero out all of the gradients for the variables which the optimizer
+            # will update.
+            optimizer.zero_grad()
+
+            # This is the backwards pass: compute the gradient of the loss with
+            # respect to each  parameter of the model.
+            loss.backward()
+
+            # Actually update the parameters of the model using the gradients
+            # computed by the backwards pass.
+            optimizer.step()
+
+            if t % print_every == 0:
+                print('Iteration %d, loss = %.4f' % (t, loss.item()))
+                check_accuracy_part34(loader_val, model)
+                print()
 
 def flatten(x):
     N = x.shape[0] # read in N, C, H, W
@@ -92,73 +148,25 @@ def zero_weight(shape):
 # Otherwise it should be `torch.FloatTensor`
 random_weight((3, 5))
 
-def check_accuracy_part2(loader, model_fn, params):
-    """
-    Check the accuracy of a classification model.
 
-    Inputs:
-    - loader: A DataLoader for the data split we want to check
-    - model_fn: A function that performs the forward pass of the model,
-      with the signature scores = model_fn(x, params)
-    - params: List of PyTorch Tensors giving parameters of the model
+# We need to wrap `flatten` function in a module in order to stack it
+# in nn.Sequential
+class Flatten(nn.Module):
+    def forward(self, x):
+        return flatten(x)
 
-    Returns: Nothing, but prints the accuracy of the model
-    """
-    split = 'val' if loader.dataset.train else 'test'
-    print('Checking accuracy on the %s set' % split)
-    num_correct, num_samples = 0, 0
-    with torch.no_grad():
-        for x, y in loader:
-            x = x.to(device=device, dtype=dtype)  # move to device, e.g. GPU
-            y = y.to(device=device, dtype=torch.int64)
-            scores = model_fn(x, params)
-            _, preds = scores.max(1)
-            num_correct += (preds == y).sum()
-            num_samples += preds.size(0)
-        acc = float(num_correct) / num_samples
-        print('Got %d / %d correct (%.2f%%)' % (num_correct, num_samples, 100 * acc))
+hidden_layer_size = 4000
+learning_rate = 1e-2
 
-def train_part2(model_fn, params, learning_rate):
-    """
-    Train a model on CIFAR-10.
+model = nn.Sequential(
+    Flatten(),
+    nn.Linear(3 * 32 * 32, hidden_layer_size),
+    nn.ReLU(),
+    nn.Linear(hidden_layer_size, 10),
+)
 
-    Inputs:
-    - model_fn: A Python function that performs the forward pass of the model.
-      It should have the signature scores = model_fn(x, params) where x is a
-      PyTorch Tensor of image data, params is a list of PyTorch Tensors giving
-      model weights, and scores is a PyTorch Tensor of shape (N, C) giving
-      scores for the elements in x.
-    - params: List of PyTorch Tensors giving weights for the model
-    - learning_rate: Python scalar giving the learning rate to use for SGD
+# you can use Nesterov momentum in optim.SGD
+optimizer = optim.SGD(model.parameters(), lr=learning_rate,
+                     momentum=0.9, nesterov=True)
 
-    Returns: Nothing
-    """
-    for t, (x, y) in enumerate(loader_train):
-        # Move the data to the proper device (GPU or CPU)
-        x = x.to(device=device, dtype=dtype)
-        y = y.to(device=device, dtype=torch.long)
-
-        # Forward pass: compute scores and loss
-        scores = model_fn(x, params)
-        loss = F.cross_entropy(scores, y)
-
-        # Backward pass: PyTorch figures out which Tensors in the computational
-        # graph has requires_grad=True and uses backpropagation to compute the
-        # gradient of the loss with respect to these Tensors, and stores the
-        # gradients in the .grad attribute of each Tensor.
-        loss.backward()
-
-        # Update parameters. We don't want to backpropagate through the
-        # parameter updates, so we scope the updates under a torch.no_grad()
-        # context manager to prevent a computational graph from being built.
-        with torch.no_grad():
-            for w in params:
-                w -= learning_rate * w.grad
-
-                # Manually zero the gradients after running the backward pass
-                w.grad.zero_()
-
-        if t % print_every == 0:
-            print('Iteration %d, loss = %.4f' % (t, loss.item()))
-            check_accuracy_part2(loader_val, model_fn, params)
-            print()
+train_part34(model, optimizer)

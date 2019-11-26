@@ -16,8 +16,10 @@ Some TODO's to work on in the future
 import os
 import sys
 
+from src.args import iargs
 
-if __name__ == "__main__":
+
+def run():
     """
     TODO I don't love the usage
     python -m src
@@ -29,7 +31,16 @@ if __name__ == "__main__":
     parent_dir = os.path.join('..', package_dir)
     sys.path.insert(0, parent_dir)
 
-    from src.models import sanity_check
+    if iargs.model == "svm":
+        from src.models import svm
 
-    results = sanity_check.test_ml_data()
-    print(results)
+        results = svm.test_ml_data()
+        print(results)
+
+    elif iargs.model == "fc":
+        from src.models import fc
+
+        # TODO
+
+if __name__ == "__main__":
+    run()
