@@ -2,8 +2,8 @@
 .idea/
 .vscode/
 
-# Data files
-data/
+# Data files, at top level only
+/data
 
 # Output
 out/

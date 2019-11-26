@@ -4,7 +4,6 @@ Data accessors for our chosen experimental data centered on neuro-imaging brain 
 import os
 import pandas as pd
 import pprint
-import numpy as np
 
 from bids import BIDSLayout
 
@@ -14,58 +13,6 @@ DATASET_PATH = os.path.join("data", "ds000157")
 # from the paper, time in seconds each scan covers
 SCAN_TIME = 1.6  # I believe the 0.023 echo time is contained within total time
 USEFUL_SCANS = 370  # from the description of the t2-weighted scans, supposedly there's 370 unless that's a typo
-
-TVT_SPLITS = (0.7, 0.9)
-
-
-class MLDataset:
-    def __init__(self,
-                 X_train, y_train,
-                 X_val, y_val,
-                 X_test, y_test):
-        self.X_train = X_train
-        self.y_train = y_train
-        self.X_val = X_val
-        self.y_val = y_val
-        self.X_test = X_test
-        self.y_test = y_test
-
-        self.mean_image = np.mean(self.X_train, axis=0)
-
-        self._normalized = False
-        self._flattened = False
-
-    def __repr__(self):
-        return "{} | Features: {}  | Train: {} | Validation: {} | Test: {}".format(
-            MLDataset.__name__,
-            self.X_train.shape[1:],
-            self.X_train.shape[0],
-            self.X_val.shape[0],
-            self.X_test.shape[0],
-        )
-
-    def normalize(self):
-        if self._normalized:
-            return
-
-        # Subtract the mean training image
-        self.X_train -= self.mean_image
-        self.X_val -= self.mean_image
-        self.X_test -= self.mean_image
-
-        self._normalized = True
-
-    def flatten(self):
-        if self._flattened:
-            return
-
-        features = np.prod(self.X_train.shape[1:])
-        self.X_train = self.X_train.reshape(self.X_train.shape[0], features)
-        self.X_val = self.X_val.reshape(self.X_val.shape[0], features)
-        self.X_test = self.X_test.reshape(self.X_test.shape[0], features)
-        # self.mean_image = self.mean_image.reshape(self.mean_image.shape[0], features)
-
-        self._flattened = True
 
 
 def get_food_temptation_data(dataset_path: str = DATASET_PATH) -> BIDSLayout:
@@ -255,72 +202,3 @@ def get_scan_assignments(num_scans: int, events: pd.DataFrame) -> dict:
             assignments[matched_event.trial_type].append(timestep)
 
     return assignments
-
-
-def get_ml_dataset(layout: BIDSLayout = None, limit: int = 3, splits=TVT_SPLITS) -> MLDataset:
-    """
-    Get brain scans as labeled data, partitioned into Train, Validate, and Test
-
-    :param layout: optional, supply if you already have a layout on hand
-    :param limit: TODO I'm figuring out some memory constraints, the data if mishandled can exceed memory
-    :param splits: The proportions of train and validation (test is inferred) to split up
-    :return: MLDataset class wrapping the data splits
-
-    TODO how am I going to cope with the memory issue?
-    64 * 64 * 30 = Per TimeStep (122,880)
-
-    dtype is <f4, for little endian, 4 bit float (Did I see it was float32 at one point?)
-    TS * 4 = 491,520 bits per ts or 61.44 kB
-
-    we have ~364 * 30 TS which is about 670.9248 mB
-    """
-    np.random.seed(2019)
-
-    if layout is None:
-        layout = get_food_temptation_data()
-
-    subject_data = get_all_subject_data(layout)
-
-    data = []
-    for s, _t1, b, e in subject_data[:limit]:
-        print("Assigning data from subject {}".format(s))
-        image_data = b.get_data()
-        num_scans = image_data.shape[-1]
-
-        # print("Total number of scans: ", num_scans)
-        scan_assignments = get_scan_assignments(num_scans, e)
-        # print(list("{}: {}".format(k, len(v)) for k, v in scan_assignments.items()))
-
-        # Gather our classification examples
-        # Ignore break / unassigned for now
-        # Use a numeric 1 (food image) and 0 (nonfood image) for our task
-        for timestep in scan_assignments['food']:
-            data.append((image_data[:, :, :, timestep], 1))
-        for timestep in scan_assignments['nonfood']:
-            data.append((image_data[:, :, :, timestep], 0))
-
-    # Stack our information in numpy arrays
-    scans, labels = zip(*data)
-    scans = np.stack(scans, axis=-1)
-    labels = np.array(labels)
-
-    # Shuffle and partition our options
-    index_df = pd.DataFrame(data=np.arange(len(data)), columns=["data_index"])
-    train_ix, validate_ix, test_ix = np.split(
-        index_df.sample(frac=1),
-        [int(splits[0] * len(index_df)),
-         int(splits[1] * len(index_df))])
-
-    # TODO Is it concerning there's a stray newaxis at the end of the indexing?
-    X_train = scans[:, :, :, train_ix].squeeze().T
-    y_train = labels[train_ix].squeeze()
-    X_val = scans[:, :, :, validate_ix].squeeze().T
-    y_val = labels[validate_ix].squeeze()
-    X_test = scans[:, :, :, test_ix].squeeze().T
-    y_test = labels[test_ix].squeeze()
-
-    return MLDataset(
-        X_train, y_train,
-        X_val, y_val,
-        X_test, y_test,
-    )

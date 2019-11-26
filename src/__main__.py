@@ -11,25 +11,18 @@ Some TODO's to work on in the future
 - Find convolution on non flattened image (3d convolution could get brain regions better?)
 
 - Review HW for good ideas in training, data manipulation, etc
-"""
 
-import os
-import sys
+# TODO is this shit from notebooks import errors?
+    # package_dir = os.path.dirname(os.path.realpath(__file__))
+    # parent_dir = os.path.join('..', package_dir)
+    # sys.path.insert(0, parent_dir)
+
+"""
 
 from src.args import iargs
 
 
 def run():
-    """
-    TODO I don't love the usage
-    python -m src
-    kinda weird
-    
-    python -m <NAME>? can I keep the dir as src and use a diff name?
-    """
-    package_dir = os.path.dirname(os.path.realpath(__file__))
-    parent_dir = os.path.join('..', package_dir)
-    sys.path.insert(0, parent_dir)
 
     if iargs.model == "svm":
         from src.models import svm
@@ -41,6 +34,7 @@ def run():
         from src.models import fc
 
         # TODO
+
 
 if __name__ == "__main__":
     run()

@@ -7,12 +7,12 @@ from sklearn.svm import SVC
 
 from bids import BIDSLayout
 
-from src import data
+from src.data.ml import get_dset
 
 
 def test_ml_data(layout: BIDSLayout = None, limit: int = 300):
 
-    ml_dataset = data.get_ml_dataset(layout=layout)
+    ml_dataset = get_dset(layout=layout)
     print("Data gathered")
     print(ml_dataset)
     ml_dataset.normalize()
