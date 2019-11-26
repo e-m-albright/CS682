@@ -1,3 +1,7 @@
+"""
+TODO shit, the image does not seem to fit at all. Absolutely no idea where I left this off
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -12,15 +16,6 @@ from torch.utils.data import sampler
 import torchvision
 from torchvision import datasets, models, transforms
 
-
-dtype = torch.float16
-
-
-if torch.cuda.is_available():
-    device = torch.device('cuda')
-else:
-    device = torch.device('cpu')
-print('using device:', device)
 
 data_dir = '../input/kermany2018/oct2017/OCT2017 '
 TRAIN = 'train'
@@ -74,7 +69,7 @@ print("Classes: ")
 class_names = image_datasets[TRAIN].classes
 print(image_datasets[TRAIN].classes)
 
-
-
-
+TRAIN = 'train'
+VAL = 'val'
+TEST = 'test'
 

@@ -10,8 +10,8 @@ out/
 
 # Paper files
 # Not mine to share
-source_paper.pdf
-# Probably don't want to include any PDF's
+related/
+# Probably don't want to include any PDF's in general
 *.pdf
 
 # Generated files
