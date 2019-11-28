@@ -3,15 +3,17 @@ Environmental configurations
 """
 import torch
 
+from src.args import iargs
 
-dtype = torch.float16
+
+dtype = torch.float32
 
 
-if torch.cuda.is_available():
+if not iargs.use_cpu and torch.cuda.is_available():
     device = torch.device('cuda')
 else:
     device = torch.device('cpu')
 
 
-print('using device:', device)
-print('using dtype:', dtype)
+print('Using device:', device)
+print('Using dtype:', dtype)

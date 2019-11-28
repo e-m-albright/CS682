@@ -1,5 +1,5 @@
 """
-Okay let's get into the machine learning of it, using an access method from data
+Assess the data readiness by using a simple SKLearn model to demonstrate learning
 """
 import pandas as pd
 from sklearn.metrics import precision_recall_fscore_support
@@ -10,7 +10,7 @@ from bids import BIDSLayout
 from src.data.ml import get_dset
 
 
-def test_ml_data(layout: BIDSLayout = None, limit: int = 300):
+def test_svm(layout: BIDSLayout = None, limit: int = 300):
 
     ml_dataset = get_dset(layout=layout)
     print("Data gathered")

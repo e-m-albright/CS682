@@ -19,13 +19,51 @@ def run():
     from src.args import iargs
 
     if iargs.model == "svm":
-        from src.models import svm
+        from src.models.sklearn import svm
+        print(svm.test_svm())
 
-        results = svm.test_ml_data()
-        print(results)
+    elif iargs.model == "mlp":
+        from src.models.sklearn import mlp
+        print(mlp.test_mlp())
 
     elif iargs.model == "fc":
         from src.models import fc
+        from src.utils.training import train
+
+        # l_train, l_validate, l_test = get_loaders()
+
+        import torch
+        import sklearn.datasets
+        x, y = sklearn.datasets.make_moons(200, noise=0.2)
+        x = torch.from_numpy(x).type(torch.FloatTensor)
+        y = torch.from_numpy(y).type(torch.LongTensor)
+
+        from torch.utils.data import DataLoader, TensorDataset
+
+        loader = DataLoader(TensorDataset(x, y))
+
+        # x, y = next(iter(l_train))
+        # print(x[0, 8:14, 20:32, 20:32])
+        # import numpy as np
+        # dimensions = np.prod(X.shape[1:])
+
+        # for lr in [1e-1, 1e-2, 1e-3, 1e-4]:
+        #     print("\n\nLR: {}".format(lr))
+        lr = 1e-2
+
+        # fc_model = fc.model(dimensions)
+        fc_model = fc.Net()
+        fc_optimizer = fc.optimizer(fc_model, learning_rate=lr)
+
+        train(
+            fc_model,
+            fc_optimizer,
+            loader,
+            loader,
+            # l_train,
+            # l_validate,
+            epochs=iargs.epochs,
+        )
 
 
 if __name__ == "__main__":

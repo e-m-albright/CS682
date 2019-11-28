@@ -14,6 +14,7 @@ from src.data import experiment
 
 
 TVT_SPLITS = (0.7, 0.9)
+BATCH_SIZE = 64
 
 
 class MLDataset:
@@ -62,6 +63,16 @@ class MLDataset:
         self.X_val = self.X_val.reshape(self.X_val.shape[0], features)
         self.X_test = self.X_test.reshape(self.X_test.shape[0], features)
         # self.mean_image = self.mean_image.reshape(self.mean_image.shape[0], features)
+
+
+        # TODO just handle the data better.
+        #   GOAL 1 is to show that we can pytorch normalize and shit
+        #   and get numpy to work still
+        from sklearn.preprocessing import normalize
+
+        self.X_train = normalize(self.X_train)
+        self.X_val = normalize(self.X_val)
+        self.X_test = normalize(self.X_test)
 
         self._flattened = True
 
@@ -138,19 +149,18 @@ def get_dset(layout: BIDSLayout = None, limit: int = 3, splits=TVT_SPLITS) -> ML
 def get_loaders(layout: BIDSLayout = None, limit: int = 3, splits=TVT_SPLITS) -> (DataLoader, DataLoader, DataLoader):
     # TODO definitely going to want to bake in the pytorch operations
     ml_dataset = get_dset(layout=layout, limit=limit, splits=splits)
-    # ml_dataset.normalize()
-    # ml_dataset.flatten()
     print(ml_dataset)
 
-    # inps = torch.arange(10 * 5, dtype=torch.float32).view(10, 5)
-    # tgts = torch.arange(10 * 5, dtype=torch.float32).view(10, 5)
+    X_train = ml_dataset.X_train
+    X_train = (X_train - X_train.mean()) / X_train.std()
 
-    # Adding np.newaxis for "channels" which this dataset doesn't seem to have
-    X_train = torch.from_numpy(ml_dataset.X_train[:,np.newaxis,:,:,:])
+    # Format the numpy arrays into Torch Tensors
+    # Note, we must add a fake channel dimension for interpolate as it assumes N x Channel x D1 x D2...
+    X_train = torch.from_numpy(X_train[:, np.newaxis, :, :, :])
     y_train = torch.from_numpy(ml_dataset.y_train)
-    X_val = torch.from_numpy(ml_dataset.X_val[:,np.newaxis,:,:,:])
+    X_val = torch.from_numpy(ml_dataset.X_val[:, np.newaxis, :, :, :])
     y_val = torch.from_numpy(ml_dataset.y_val)
-    X_test = torch.from_numpy(ml_dataset.X_test[:,np.newaxis,:,:,:])
+    X_test = torch.from_numpy(ml_dataset.X_test[:, np.newaxis, :, :, :])
     y_test = torch.from_numpy(ml_dataset.y_test)
 
     # TODO this data is way too goddamn big, I need to downsample to survive
@@ -158,24 +168,23 @@ def get_loaders(layout: BIDSLayout = None, limit: int = 3, splits=TVT_SPLITS) ->
     #  orientation doesn't matter
     X_train = F.interpolate(
         X_train,
-        scale_factor=3./4.,
+        scale_factor=2./4.,
     )
     X_val = F.interpolate(
         X_val,
-        scale_factor=3./4,
+        scale_factor=2./4,
     )
     X_test = F.interpolate(
         X_test,
-        scale_factor=3./4,
+        scale_factor=2./4,
     )
-    print(X_train.shape, X_train.squeeze().shape)
-    train = TensorDataset(X_train, y_train)
-    val = TensorDataset(X_val, y_val)
-    test = TensorDataset(X_test, y_test)
 
-    features = np.prod(X_train.shape[2:])
-    print("Before downsampling: ", np.prod(ml_dataset.X_train.shape[1:]))
-    print("After: ", features)
+    print("Before downsampling: shape={}, features={}".format(
+        ml_dataset.X_train.shape,
+        np.prod(ml_dataset.X_train.shape[1:])))
+    print("After downsampling: shape={}, features={}".format(
+        X_train.squeeze().shape,
+        np.prod(X_train.squeeze().shape[1:])))
 
     # The torchvision.transforms package provides tools for preprocessing data
     # and for performing data augmentation; here we set up a transform to
@@ -187,21 +196,101 @@ def get_loaders(layout: BIDSLayout = None, limit: int = 3, splits=TVT_SPLITS) ->
     ])
 
     loader_train = DataLoader(
-        train,
-        batch_size=64,
+        TensorDataset(X_train.squeeze(), y_train),
+        batch_size=BATCH_SIZE,
     #     transformer=data_transforms, TODO something like that
     #     sampler=sampler.SubsetRandomSampler(range(NUM_TRAIN)),
-    )
-
-    loader_val = DataLoader(
-        val,
-        batch_size=64,
     #     sampler=sampler.SubsetRandomSampler(range(NUM_TRAIN, 50000)),
     )
 
+    loader_val = DataLoader(
+        TensorDataset(X_val.squeeze(), y_val),
+        batch_size=BATCH_SIZE,
+    )
+
     loader_test = DataLoader(
-        test,
-        batch_size=64,
+        TensorDataset(X_test.squeeze(), y_test),
+        batch_size=BATCH_SIZE,
     )
 
     return loader_train, loader_val, loader_test
+
+
+
+"""
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.autograd import Variable
+from torch.optim import lr_scheduler
+from torch.utils.data import DataLoader
+from torch.utils.data import sampler
+
+import torchvision
+from torchvision import datasets, models, transforms
+
+
+data_dir = '../input/kermany2018/oct2017/OCT2017 '
+TRAIN = 'train'
+VAL = 'val'
+TEST = 'test'
+
+# VGG-16 Takes 224x224 images as input, so we resize all of them
+data_transforms = {
+    TRAIN: transforms.Compose([
+        # Data augmentation is a good practice for the train set
+        # Here, we randomly crop the image to 224x224 and
+        # randomly flip it horizontally.
+        transforms.RandomResizedCrop(224),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+    ]),
+    VAL: transforms.Compose([
+        transforms.Resize(256),
+        transforms.CenterCrop(224),
+        transforms.ToTensor(),
+    ]),
+    TEST: transforms.Compose([
+        transforms.Resize(256),
+        transforms.CenterCrop(224),
+        transforms.ToTensor(),
+    ])
+}
+
+image_datasets = {
+    x: datasets.ImageFolder(
+        os.path.join(data_dir, x),
+        transform=data_transforms[x]
+    )
+    for x in [TRAIN, VAL, TEST]
+}
+
+dataloaders = {
+    x: torch.utils.data.DataLoader(
+        image_datasets[x], batch_size=8,
+        shuffle=True, num_workers=4
+    )
+    for x in [TRAIN, VAL, TEST]
+}
+
+dataset_sizes = {x: len(image_datasets[x]) for x in [TRAIN, VAL, TEST]}
+
+for x in [TRAIN, VAL, TEST]:
+    print("Loaded {} images under {}".format(dataset_sizes[x], x))
+
+print("Classes: ")
+class_names = image_datasets[TRAIN].classes
+print(image_datasets[TRAIN].classes)
+
+TRAIN = 'train'
+VAL = 'val'
+TEST = 'test'
+
+
+
+
+"""
