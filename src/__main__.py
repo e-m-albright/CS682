@@ -30,17 +30,9 @@ def run():
         from src.models import fc
         from src.utils.training import train
 
-        # l_train, l_validate, l_test = get_loaders()
+        from src.data.ml import Dataset
 
-        import torch
-        import sklearn.datasets
-        x, y = sklearn.datasets.make_moons(200, noise=0.2)
-        x = torch.from_numpy(x).type(torch.FloatTensor)
-        y = torch.from_numpy(y).type(torch.LongTensor)
-
-        from torch.utils.data import DataLoader, TensorDataset
-
-        loader = DataLoader(TensorDataset(x, y))
+        Dataset()
 
         # x, y = next(iter(l_train))
         # print(x[0, 8:14, 20:32, 20:32])
@@ -58,10 +50,7 @@ def run():
         train(
             fc_model,
             fc_optimizer,
-            loader,
-            loader,
-            # l_train,
-            # l_validate,
+            # dset,
             epochs=iargs.epochs,
         )
 

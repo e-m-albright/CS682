@@ -5,30 +5,27 @@ import pandas as pd
 from sklearn.metrics import precision_recall_fscore_support
 from sklearn.neural_network import MLPClassifier
 
-from bids import BIDSLayout
-
-from src.data.ml import get_dset
+from src.data.ml import Dataset
 
 
-def test_mlp(layout: BIDSLayout = None, limit: int = 300):
+def test_mlp(limit: int = 300):
+    dataset = Dataset(limit=5, splits=(0.8, 0.2))
+    print(dataset)
 
-    ml_dataset = get_dset(layout=layout)
-    print("Data gathered")
-    print(ml_dataset)
-    ml_dataset.normalize()
-    ml_dataset.flatten()
-    print(ml_dataset)
+    X_train, y_train = dataset.get_train(flat=True, numpy=True)
+    X_val, y_val = dataset.get_val(flat=True, numpy=True)
 
     classifier = MLPClassifier(
         solver='adam',
         hidden_layer_sizes=(100, 100),
         random_state=1,
     )
+    
     print("Training MLPClassifier model on {} scans".format(limit))
-    classifier.fit(ml_dataset.X_train[:limit], ml_dataset.y_train[:limit])
+    classifier.fit(X_train[:limit], y_train[:limit])
 
     print("Predicting using MLPClassifier model")
-    metrics = precision_recall_fscore_support(ml_dataset.y_val, classifier.predict(ml_dataset.X_val))
+    metrics = precision_recall_fscore_support(y_val, classifier.predict(X_val))
     results = pd.DataFrame(
         data=metrics,
         columns=['food', 'nonfood'],
