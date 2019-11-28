@@ -3,6 +3,7 @@ Data from our chosen experimental data in a readily consumed format for machine 
 """
 import numpy as np
 
+from sklearn.preprocessing import normalize
 import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader, TensorDataset
@@ -17,12 +18,14 @@ BATCH_SIZE = 64
 class Dataset:
     def __init__(self, limit=3, splits=TVT_SPLITS):
         X, y = self._get_experimental_data(limit=limit)
-        dataset = self._clean(X, y)
+        dataset = self._transform(X, y)
         train, val, test = self._split(dataset, splits)
 
         self._train = train
         self._val = val
         self._test = test
+
+        self._clean()
 
     @staticmethod
     def _get_split(split, flat=False, numpy=False):
@@ -48,6 +51,10 @@ class Dataset:
     def get_test(self, *args, **kwargs):
         return self._get_split(self._test, *args, **kwargs)
     test = property(get_test)
+
+    @property
+    def dimensions(self):
+        return np.prod(list(self.train[0].shape)[1:])
 
     def __repr__(self):
         s_train = list(self.train[0].shape)
@@ -108,14 +115,7 @@ class Dataset:
         return scans.T, labels.T
 
     @staticmethod
-    def _clean(X, y):
-        # Normalize
-        X = (X - X.mean()) / X.std()
-
-        # TODO
-        #   self.mean_image = np.mean(self.X_train, axis=0)
-        #   subtract mean image
-
+    def _transform(X, y):
         # Load in data, add a fake channel dimension to allow interpolation
         data = torch.from_numpy(X.reshape(X.shape[0], 1, *X.shape[1:]))
         labels = torch.from_numpy(y)
@@ -145,6 +145,21 @@ class Dataset:
         return torch.utils.data.random_split(
             dataset,
             [train_size, val_size, test_size])
+
+    def _clean(self):
+        pass
+    #     train =
+    #
+    #     # Normalize
+    #     # TODO normalize per image? or accross everything?
+    #     # X = (X - X.mean()) / X.std()
+    #
+    #     mean_image = np.mean(X_train, axis=0)
+    #     X_train -= mean_image
+    #     X_val -= mean_image
+    #
+    #     X_train = normalize(X_train)
+    #     X_val = normalize(X_val)
 
     def get_loaders(self) -> (DataLoader, DataLoader, DataLoader):
         return [

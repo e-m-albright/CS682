@@ -5,6 +5,7 @@ import torch
 from torch.nn import functional as F
 
 from src.env import device, dtype
+from src.data.ml import Dataset
 
 
 def accuracy(l, model):
@@ -23,8 +24,10 @@ def accuracy(l, model):
         print("{:d} / {:d} correct (%{:.2f})".format(num_correct, num_samples, 100 * acc))
 
 
-def train(model, optimizer, l_train, l_validate, epochs=1):
+def train(model, optimizer, dataset: Dataset, epochs=1):
     model = model.to(device=device)
+
+    l_train, l_validate, _ = dataset.get_loaders()
 
     for e in range(epochs):
         print("\nEpoch: {}, with {} batches".format(e, len(l_train)))

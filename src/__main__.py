@@ -32,25 +32,20 @@ def run():
 
         from src.data.ml import Dataset
 
-        Dataset()
-
-        # x, y = next(iter(l_train))
-        # print(x[0, 8:14, 20:32, 20:32])
-        # import numpy as np
-        # dimensions = np.prod(X.shape[1:])
+        dataset = Dataset()
 
         # for lr in [1e-1, 1e-2, 1e-3, 1e-4]:
         #     print("\n\nLR: {}".format(lr))
         lr = 1e-2
 
-        # fc_model = fc.model(dimensions)
-        fc_model = fc.Net()
+        fc_model = fc.model(dataset.dimensions)
+        # fc_model = fc.Net()
         fc_optimizer = fc.optimizer(fc_model, learning_rate=lr)
 
         train(
             fc_model,
             fc_optimizer,
-            # dset,
+            dataset,
             epochs=iargs.epochs,
         )
 
