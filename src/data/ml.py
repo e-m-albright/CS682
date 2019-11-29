@@ -19,17 +19,16 @@ class Dataset:
     def __init__(self, limit=3, splits=TVT_SPLITS):
         X, y = self._get_experimental_data(limit=limit)
         dataset = self._transform(X, y)
-        train, val, test = self._split(dataset, splits)
+        splits = self._split(dataset, splits)
+        train, val, test = self._clean(*splits)
 
         self._train = train
         self._val = val
         self._test = test
 
-        self._clean()
-
     @staticmethod
     def _get_split(split, flat=False, numpy=False):
-        data, labels = split.dataset[split.indices]
+        data, labels = split.tensors
 
         if flat:
             data = data.view(data.shape[0], -1)
@@ -120,6 +119,9 @@ class Dataset:
         data = torch.from_numpy(X.reshape(X.shape[0], 1, *X.shape[1:]))
         labels = torch.from_numpy(y)
 
+        # Standardize data, 0 - 1
+        data = (data - data.mean()) / (data.max() - data.min())
+
         # Data is quite large, downsampling is fairly important to survive
         #  mini-batch x channels x [optional depth] x [optional height] x width.
         #  orientation doesn't matter
@@ -146,20 +148,23 @@ class Dataset:
             dataset,
             [train_size, val_size, test_size])
 
-    def _clean(self):
-        pass
-    #     train =
-    #
-    #     # Normalize
-    #     # TODO normalize per image? or accross everything?
-    #     # X = (X - X.mean()) / X.std()
-    #
-    #     mean_image = np.mean(X_train, axis=0)
-    #     X_train -= mean_image
-    #     X_val -= mean_image
-    #
-    #     X_train = normalize(X_train)
-    #     X_val = normalize(X_val)
+    @staticmethod
+    def _clean(train, val, test):
+        X_train, y_train = train.dataset[train.indices]
+        X_val, y_val = val.dataset[val.indices]
+        X_test, y_test = test.dataset[test.indices]
+
+        # Take out the mean training image from all splits
+        mean_image = X_train.mean(axis=0)
+        X_train -= mean_image
+        X_val -= mean_image
+        X_test -= mean_image
+
+        return (
+            TensorDataset(X_train, y_train),
+            TensorDataset(X_val, y_val),
+            TensorDataset(X_test, y_test),
+        )
 
     def get_loaders(self) -> (DataLoader, DataLoader, DataLoader):
         return [
