@@ -3,8 +3,8 @@ Data from our chosen experimental data in a readily consumed format for machine 
 """
 import numpy as np
 
-from sklearn.preprocessing import normalize
 import torch
+from torch.autograd import Variable
 from torch.nn import functional as F
 from torch.utils.data import DataLoader, TensorDataset
 

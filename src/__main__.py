@@ -34,20 +34,19 @@ def run():
 
         dataset = Dataset()
 
-        # for lr in [1e-1, 1e-2, 1e-3, 1e-4]:
-        #     print("\n\nLR: {}".format(lr))
-        lr = 1e-2
+        for lr in [1e-1, 1e-2, 1e-3, 1e-4]:
+            print("\n\nLR: {}".format(lr))
 
-        fc_model = fc.model(dataset.dimensions)
-        # fc_model = fc.Net()
-        fc_optimizer = fc.optimizer(fc_model, learning_rate=lr)
+            fc_model = fc.model(dataset.dimensions)
+            # fc_model = fc.Net()
+            fc_optimizer = fc.optimizer(fc_model, learning_rate=lr)
 
-        train(
-            fc_model,
-            fc_optimizer,
-            dataset,
-            epochs=iargs.epochs,
-        )
+            train(
+                fc_model,
+                fc_optimizer,
+                dataset,
+                epochs=iargs.epochs,
+            )
 
 
 if __name__ == "__main__":

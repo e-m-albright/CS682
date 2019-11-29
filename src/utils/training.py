@@ -2,6 +2,7 @@
 Neural Network training and evaluation
 """
 import torch
+from torch.autograd import Variable
 from torch.nn import functional as F
 
 from src.env import device, dtype
@@ -34,16 +35,18 @@ def train(model, optimizer, dataset: Dataset, epochs=1):
 
         for t, (x, y) in enumerate(l_train):
             model.train()
-            x = x.to(device=device, dtype=dtype)
-            y = y.to(device=device, dtype=torch.long)
 
-            scores = model.forward(x)
+            x = Variable(x, requires_grad=True)
+
+            x = x.to(device=device, dtype=dtype)
+            y = y.to(device=device, dtype=dtype)  #dtype=torch.long)
+
+            scores = model(x).squeeze()
+            # scores = model.forward(x)
             # print("ALL ONES: ", torch.all(scores.eq(1.0)))
 
-            from torch import nn
-            # loss = nn.BCELoss(scores, y)
-            loss = F.cross_entropy(scores, y)
-            # loss = F.binary_cross_entropy(scores, y)
+            # loss = F.cross_entropy(scores, y)
+            loss = F.binary_cross_entropy(scores, y)
 
             optimizer.zero_grad()
             loss.backward()
