@@ -39,14 +39,16 @@ def train(model, optimizer, dataset: Dataset, epochs=1):
             x = Variable(x, requires_grad=True)
 
             x = x.to(device=device, dtype=dtype)
-            y = y.to(device=device, dtype=dtype)  #dtype=torch.long)
+            y = y.to(device=device, dtype=torch.long)  # cross entropy
+            # y = y.to(device=device, dtype=dtype)  # binary cross entropy
 
-            scores = model(x).squeeze()
+            scores = model(x)#.squeeze()
+            print(scores.shape, y.shape)
             # scores = model.forward(x)
             # print("ALL ONES: ", torch.all(scores.eq(1.0)))
 
-            # loss = F.cross_entropy(scores, y)
-            loss = F.binary_cross_entropy(scores, y)
+            loss = F.cross_entropy(scores, y)
+            # loss = F.binary_cross_entropy(scores, y)
 
             optimizer.zero_grad()
             loss.backward()

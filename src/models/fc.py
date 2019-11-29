@@ -12,26 +12,22 @@ import torch.optim as optim
 from src.defs.layers import flatten, Flatten
 
 
-def model(idim, hdim: int = 6000):
+def model(idim, hdim: int = 300):
     return nn.Sequential(
 
         Flatten(),
 
         nn.Linear(idim, hdim),
-
         nn.ReLU(),
-        # nn.Tanh(),
-
         # nn.Dropout(0.2),
-        #
-        # nn.Linear(hdim, hdim),
-        #
-        # nn.Tanh(),
 
-        nn.Linear(hdim, 1),
+        nn.Linear(hdim, hdim),
+        nn.ReLU(),
 
-        nn.Sigmoid(),
+        nn.Linear(hdim, 2),
 
+        # nn.Sigmoid(),
+        # nn.LogSigmoid(),
     )
 
 
