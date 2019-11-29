@@ -16,9 +16,9 @@ BATCH_SIZE = 64
 
 
 class Dataset:
-    def __init__(self, limit=3, splits=TVT_SPLITS):
+    def __init__(self, standardize=True, limit=3, splits=TVT_SPLITS):
         X, y = self._get_experimental_data(limit=limit)
-        dataset = self._transform(X, y)
+        dataset = self._transform(X, y, standardize=standardize)
         splits = self._split(dataset, splits)
         train, val, test = self._clean(*splits)
 
@@ -114,13 +114,14 @@ class Dataset:
         return scans.T, labels.T
 
     @staticmethod
-    def _transform(X, y):
+    def _transform(X, y, standardize=True):
         # Load in data, add a fake channel dimension to allow interpolation
         data = torch.from_numpy(X.reshape(X.shape[0], 1, *X.shape[1:]))
         labels = torch.from_numpy(y)
 
-        # Standardize data, 0 - 1
-        data = (data - data.mean()) / (data.max() - data.min())
+        if standardize:
+            # Standardize data, 0 - 1
+            data = (data - data.mean()) / (data.max() - data.min())
 
         # Data is quite large, downsampling is fairly important to survive
         #  mini-batch x channels x [optional depth] x [optional height] x width.

@@ -9,7 +9,7 @@ from src.data.ml import Dataset
 
 
 def test_svm(limit: int = 300):
-    dataset = Dataset(limit=5, splits=(0.8, 0.2))
+    dataset = Dataset(standardize=False, limit=5, splits=(0.8, 0.2))
     print(dataset)
 
     X_train, y_train = dataset.get_train(flat=True, numpy=True)
