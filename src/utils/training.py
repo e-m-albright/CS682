@@ -2,7 +2,6 @@
 Neural Network training and evaluation
 """
 import torch
-from torch.autograd import Variable
 from torch.nn import functional as F
 
 from src.env import device, dtype
@@ -25,7 +24,7 @@ def accuracy(l, model):
         print("{:d} / {:d} correct (%{:.2f})".format(num_correct, num_samples, 100 * acc))
 
 
-def train(model, optimizer, dataset: Dataset, epochs=1):
+def train(model, optimizer, criterion, dataset: Dataset, epochs=1):
     model = model.to(device=device)
 
     l_train, l_validate, _ = dataset.get_loaders()
@@ -36,19 +35,22 @@ def train(model, optimizer, dataset: Dataset, epochs=1):
         for t, (x, y) in enumerate(l_train):
             model.train()
 
-            x = Variable(x, requires_grad=True)
-
+            # x = x.requires_grad_()
+            #
             x = x.to(device=device, dtype=dtype)
             y = y.to(device=device, dtype=torch.long)  # cross entropy
-            # y = y.to(device=device, dtype=dtype)  # binary cross entropy
+            # # y = y.to(device=device, dtype=dtype)  # binary cross entropy
+            #
+            # scores = model(x)#.squeeze()
+            # print(scores.shape, y.shape)
+            # # scores = model.forward(x)
+            # # print("ALL ONES: ", torch.all(scores.eq(1.0)))
+            #
+            # loss = F.cross_entropy(scores, y)
+            # # loss = F.binary_cross_entropy(scores, y)
 
-            scores = model(x)#.squeeze()
-            print(scores.shape, y.shape)
-            # scores = model.forward(x)
-            # print("ALL ONES: ", torch.all(scores.eq(1.0)))
-
-            loss = F.cross_entropy(scores, y)
-            # loss = F.binary_cross_entropy(scores, y)
+            scores = model(x)
+            loss = criterion(scores, y)
 
             optimizer.zero_grad()
             loss.backward()
