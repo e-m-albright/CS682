@@ -9,11 +9,11 @@ from src.data.ml import Dataset
 
 
 def test_svm(limit: int = 300):
-    dataset = Dataset(standardize=False, limit=5, splits=(0.8, 0.2))
+    dataset = Dataset(standardize=False, dimensions="1d", limit=5, splits=(0.8, 0.2))
     print(dataset)
 
-    X_train, y_train = dataset.get_train(flat=True, numpy=True)
-    X_val, y_val = dataset.get_val(flat=True, numpy=True)
+    X_train, y_train = dataset.get_train(numpy=True)
+    X_val, y_val = dataset.get_val(numpy=True)
 
     svc = SVC(
         kernel='linear',

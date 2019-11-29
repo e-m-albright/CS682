@@ -12,23 +12,23 @@ import torch.optim as optim
 from src.defs.layers import flatten, Flatten
 
 
-def model(idim, hdim: int = 300):
-    return nn.Sequential(
-
-        Flatten(),
-
-        nn.Linear(idim, hdim),
-        nn.ReLU(),
-        # nn.Dropout(0.2),
-
-        nn.Linear(hdim, hdim),
-        nn.ReLU(),
-
-        nn.Linear(hdim, 2),
-
-        # nn.Sigmoid(),
-        # nn.LogSigmoid(),
-    )
+# def model(idim, hdim: int = 300):
+#     return nn.Sequential(
+#
+#         Flatten(),
+#
+#         nn.Linear(idim, hdim),
+#         nn.ReLU(),
+#         # nn.Dropout(0.2),
+#
+#         nn.Linear(hdim, hdim),
+#         nn.ReLU(),
+#
+#         nn.Linear(hdim, 2),
+#
+#         # nn.Sigmoid(),
+#         # nn.LogSigmoid(),
+#     )
 
 
 def optimizer(model, learning_rate: float = 1e-2):
@@ -39,12 +39,9 @@ def optimizer(model, learning_rate: float = 1e-2):
         # nesterov=True,
     )
 
-    # return optim.Adam(
-    #     model.parameters(),
-    #     lr=learning_rate)
 
-
-criterion = nn.NLLLoss()
+def criterion():
+    return nn.NLLLoss()
 
 
 class Net(nn.Module):
@@ -61,14 +58,13 @@ class Net(nn.Module):
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
 
-        return F.log_softmax(x)
+        return F.log_softmax(x)#, dim=x.dim())
 
     def predict(self, x):
 
         pred = F.softmax(self.forward(x))
         ans = []
 
-        # Pick the class with maximum weight
         for t in pred:
             if t[0] > t[1]:
                 ans.append(0)

@@ -4,7 +4,6 @@ Data from our chosen experimental data in a readily consumed format for machine 
 import numpy as np
 
 import torch
-from torch.autograd import Variable
 from torch.nn import functional as F
 from torch.utils.data import DataLoader, TensorDataset
 
@@ -16,21 +15,22 @@ BATCH_SIZE = 64
 
 
 class Dataset:
-    def __init__(self, standardize=True, limit=3, splits=TVT_SPLITS):
+    def __init__(self, standardize=True, dimensions: str = "3d", scale=1.0, limit=3, splits=TVT_SPLITS):
+        self._d = dimensions
+
         X, y = self._get_experimental_data(limit=limit)
-        dataset = self._transform(X, y, standardize=standardize)
+        dataset = self._transform(X, y, standardize=standardize, scale=scale)
         splits = self._split(dataset, splits)
-        train, val, test = self._clean(*splits)
+        train, val, test = self._clean(*splits, dimensions=dimensions)
 
         self._train = train
         self._val = val
         self._test = test
 
-    @staticmethod
-    def _get_split(split, flat=False, numpy=False):
+    def _get_split(self, split, numpy=False):
         data, labels = split.tensors
 
-        if flat:
+        if self._d == "1d":
             data = data.view(data.shape[0], -1)
 
         if numpy:
@@ -114,7 +114,16 @@ class Dataset:
         return scans.T, labels.T
 
     @staticmethod
-    def _transform(X, y, standardize=True):
+    def _transform(X, y, standardize=True, scale=3./4):
+
+        # Cut down the data size, there's a lot of empty space in the scans
+        # this may be clumsy but really helps keep the size of data down
+        # retain all samples, vertical dimensions, cut the front to back & side to side
+        print("Shaving bulk of empty space out of scans")
+        print("Before shave: ", X.shape)
+        X = X[:, :, 10:54, 12:52]
+        print("After shave: ", X.shape)
+
         # Load in data, add a fake channel dimension to allow interpolation
         data = torch.from_numpy(X.reshape(X.shape[0], 1, *X.shape[1:]))
         labels = torch.from_numpy(y)
@@ -131,7 +140,7 @@ class Dataset:
             np.prod(data.shape[1:])))
         data = F.interpolate(
             data,
-            scale_factor=2./4.,
+            scale_factor=scale,
         )
         data = data.squeeze()
         print("After downsampling: shape={}, features={}".format(
@@ -150,7 +159,7 @@ class Dataset:
             [train_size, val_size, test_size])
 
     @staticmethod
-    def _clean(train, val, test):
+    def _clean(train, val, test, dimensions):
         X_train, y_train = train.dataset[train.indices]
         X_val, y_val = val.dataset[val.indices]
         X_test, y_test = test.dataset[test.indices]
@@ -160,6 +169,20 @@ class Dataset:
         X_train -= mean_image
         X_val -= mean_image
         X_test -= mean_image
+
+        # Add an image channel for non 1d formats
+        if dimensions in ["2d", "3d"]:
+            print("Adding a channel dimension for convolutional networks")
+            X_train = X_train.view(X_train.shape[0], 1, *X_train.shape[1:])
+            X_val = X_val.view(X_val.shape[0], 1, *X_val.shape[1:])
+            X_test = X_test.view(X_test.shape[0], 1, *X_test.shape[1:])
+
+        # Flatten axially for 2d, creating the average top-down view
+        if dimensions == "2d":
+            print("Flattening axially for 2d view")
+            X_train = X_train.mean(dim=2)
+            X_val = X_val.mean(dim=2)
+            X_test = X_test.mean(dim=2)
 
         return (
             TensorDataset(X_train, y_train),

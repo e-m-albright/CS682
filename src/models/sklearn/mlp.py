@@ -9,11 +9,11 @@ from src.data.ml import Dataset
 
 
 def test_mlp(limit: int = 1000):
-    dataset = Dataset(limit=3, splits=(0.8, 0.2))
+    dataset = Dataset(dimensions="1d", limit=3, splits=(0.8, 0.2))
     print(dataset)
 
-    X_train, y_train = dataset.get_train(flat=True, numpy=True)
-    X_val, y_val = dataset.get_val(flat=True, numpy=True)
+    X_train, y_train = dataset.get_train(numpy=True)
+    X_val, y_val = dataset.get_val(numpy=True)
 
     classifier = MLPClassifier(
         solver='adam',

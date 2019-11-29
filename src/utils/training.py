@@ -1,6 +1,8 @@
 """
 Neural Network training and evaluation
 """
+from sklearn import metrics
+
 import torch
 from torch.nn import functional as F
 
@@ -8,7 +10,7 @@ from src.env import device, dtype
 from src.data.ml import Dataset
 
 
-def accuracy(l, model):
+def evaluate(l, model):
     num_correct = 0
     num_samples = 0
     model.eval()  # set model to evaluation mode
@@ -23,40 +25,66 @@ def accuracy(l, model):
         acc = float(num_correct) / num_samples
         print("{:d} / {:d} correct (%{:.2f})".format(num_correct, num_samples, 100 * acc))
 
+    return acc
+    # roc_auc = metrics.roc_auc_score
+    # roc_auc(y, pred)
 
-def train(model, optimizer, criterion, dataset: Dataset, epochs=1):
+
+def train(
+        model,
+        optimizer,
+        criterion,
+        dataset: Dataset,
+        epochs=1,
+        print_frequency: int = 1):
+
     model = model.to(device=device)
 
     l_train, l_validate, _ = dataset.get_loaders()
+    num_batches = len(l_train)
+
+    print("Training with {} batches".format(num_batches))
+    losses, accuracies = [], []
 
     for e in range(epochs):
-        print("\nEpoch: {}, with {} batches".format(e, len(l_train)))
+        print("\nEpoch: {}".format(e + 1))
 
-        for t, (x, y) in enumerate(l_train):
+        round_loss = 0.0
+        for i, (x, y) in enumerate(l_train):
+
+            # Prepare for training
             model.train()
-
             # x = x.requires_grad_()
-            #
             x = x.to(device=device, dtype=dtype)
-            y = y.to(device=device, dtype=torch.long)  # cross entropy
-            # # y = y.to(device=device, dtype=dtype)  # binary cross entropy
-            #
-            # scores = model(x)#.squeeze()
-            # print(scores.shape, y.shape)
-            # # scores = model.forward(x)
-            # # print("ALL ONES: ", torch.all(scores.eq(1.0)))
-            #
-            # loss = F.cross_entropy(scores, y)
-            # # loss = F.binary_cross_entropy(scores, y)
+            y = y.to(device=device, dtype=torch.long)
 
+            # Forward pass
             scores = model(x)
+            # print(scores, y)
+            # print("ALL ONES: ", torch.all(scores.eq(1.0)))
+
             loss = criterion(scores, y)
 
+            # Save info for plotting
+            round_loss += loss.item()
+            losses.append(loss.item())
+
+            # Backward pass
+            # Update weights
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
 
-        print("Loss at {:.4f}".format(t, loss.item()))
-        # accuracy(l_train, model)
-        accuracy(l_validate, model)
-    print()
+            # Log performance
+            if i % print_frequency == 0:
+                print("[{:>3d}/{:>3d}] Loss: {:.4f}".format(
+                    i + 1, num_batches,
+                    loss.item(),
+                ))
+
+        accuracy = evaluate(l_validate, model)
+
+        losses.append(round_loss / num_batches)
+        accuracies.append(accuracy)
+
+    return losses, accuracies
