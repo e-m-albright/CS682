@@ -26,11 +26,12 @@ def train(model_fn, optimizer_fn, criterion_fn, dataset: Dataset, h: Hyperparame
 
         model = model_fn(dataset.dimensions)
         optimizer = optimizer_fn(model, learning_rate=lr)
+        criterion = criterion_fn()
 
         vanilla_train(
             model,
             optimizer,
-            criterion_fn,
+            criterion,
             dataset,
             epochs=h.epochs,
         )

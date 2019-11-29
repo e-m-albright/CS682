@@ -26,7 +26,7 @@ def criterion():
     return nn.CrossEntropyLoss()
 
 
-def model():
+def model(*args, **kwargs):
     return SingleChannelResNet(
         resnet.BasicBlock,  # block
         [2, 2, 2, 2],  # layers

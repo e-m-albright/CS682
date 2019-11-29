@@ -11,20 +11,12 @@ from torchvision.models import video
 from src.defs import weights
 
 
-# torch.nn.Conv3d(in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1, groups=1, bias=True, padding_mode='zeros')
-
-
 def optimizer(model, learning_rate: float = 1e-2):
     return optim.SGD(
         model.parameters(),
         lr=learning_rate,
         momentum=0.9,
-        # nesterov=True,
     )
-    # return optim.Adam(
-    #     model.parameters(),
-    #     lr=learning_rate,
-    # )
 
 
 def criterion():
@@ -43,19 +35,6 @@ class SingleChannelStem(nn.Sequential):
 
 
 def resnet3d():
-    # def __init__(self, block, conv_makers, layers,
-    #              stem, num_classes=400,
-    #              zero_init_residual=False):
-    #     """Generic resnet video generator.
-    #
-    #     Args:
-    #         block (nn.Module): resnet building block
-    #         conv_makers (list(functions)): generator function for each layer
-    #         layers (List[int]): number of blocks per layer
-    #         stem (nn.Module, optional): Resnet stem, if None, defaults to conv-bn-relu. Defaults to None.
-    #         num_classes (int, optional): Dimension of the final FC layer. Defaults to 400.
-    #         zero_init_residual (bool, optional): Zero init bottleneck residual BN. Defaults to False.
-    #     """
     pretrained = False
     progress = True
 
@@ -65,10 +44,6 @@ def resnet3d():
          conv_makers=[video.Conv3DSimple] * 4,
          layers=[2, 2, 2, 2],
          stem=SingleChannelStem)
-    return video.r3d_18(
-        pretrained=False,
-        progress=True,
-        stem=SingleChannelStem)
 
 
 class Net(nn.Module):

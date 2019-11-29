@@ -44,27 +44,20 @@ def run():
     elif iargs.model in ["conv2d", "2d"]:
         from src.data.ml import Dataset
         from src.models import conv2d
-        from src.utils import plotting
-        from src.utils.training import train
+        from src.utils import hyper, plotting
 
         dataset = Dataset(dimensions='2d')
 
-        model = conv2d.model()
-        optimizer = conv2d.optimizer(model, learning_rate=1e-2)
-        criterion = conv2d.criterion()
-
-        losses, accuracies = train(
-            model,
-            optimizer,
-            criterion,
+        hyper.train(
+            conv2d.model,
+            conv2d.optimizer,
+            conv2d.criterion,
             dataset,
-            epochs=iargs.epochs,
-            print_frequency=iargs.print_freq,
+            hyper.Hyperparameters(
+                epochs=iargs.epochs,
+                learning_rates=[1e-1, 1e-2, 1e-3, 1e-4],
+            )
         )
-
-        if iargs.plot:
-            plotting.plot_loss(losses)
-            plotting.plot_accuracies(accuracies)
 
     elif iargs.model in ["conv3d", "3d"]:
         from src.data.ml import Dataset
