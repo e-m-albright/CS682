@@ -8,12 +8,17 @@ from sklearn.svm import SVC
 from src.data.ml import Dataset
 
 
-def test_svm(limit: int = 300):
-    dataset = Dataset(standardize=False, dimensions="1d", limit=5, splits=(0.8, 0.2))
+def test_svm(limit: int = 400):
+    # 1d is the standard way, seems a little better than the single slice 2d method
+    # but this is not a bad approach
+    dataset = Dataset(standardize=False, dimensions="2d", limit=5, splits=(0.7, 0.2))
     print(dataset)
 
     X_train, y_train = dataset.get_train(numpy=True)
     X_val, y_val = dataset.get_val(numpy=True)
+
+    X_train = X_train.reshape(X_train.shape[0], -1)
+    X_val = X_val.reshape(X_val.shape[0], -1)
 
     svc = SVC(
         kernel='linear',

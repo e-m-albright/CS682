@@ -170,6 +170,11 @@ class Dataset:
         X_val -= mean_image
         X_test -= mean_image
 
+        # # Standardize data, 0 - 1 (mean pushes neg, is it okay? lets readjust
+        # X_train = (X_train - X_train.mean()) / (X_train.max() - X_train.min())
+        # X_val = (X_val - X_val.mean()) / (X_val.max() - X_val.min())
+        # X_test = (X_test - X_test.mean()) / (X_test.max() - X_test.min())
+
         # Add an image channel for non 1d formats
         if dimensions in ["2d", "3d"]:
             print("Adding a channel dimension for convolutional networks")
@@ -177,12 +182,15 @@ class Dataset:
             X_val = X_val.view(X_val.shape[0], 1, *X_val.shape[1:])
             X_test = X_test.view(X_test.shape[0], 1, *X_test.shape[1:])
 
-        # Flatten axially for 2d, creating the average top-down view
+        # Flatten axially for 2d, choosing a manner of getting a horizontal slice
         if dimensions == "2d":
             print("Flattening axially for 2d view")
-            X_train = X_train.mean(dim=2)
-            X_val = X_val.mean(dim=2)
-            X_test = X_test.mean(dim=2)
+            # Taking the mean is worse than a single slice, I think it confuses info way too much
+            # X_train = X_train.mean(dim=2)
+            slice_height = X_train.shape[2] // 2
+            X_train = X_train[:, :, slice_height, :, :]
+            X_val = X_val[:, :, slice_height, :, :]
+            X_test = X_test[:, :, slice_height, :, :]
 
         return (
             TensorDataset(X_train, y_train),

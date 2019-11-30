@@ -9,7 +9,10 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
+from src.data.ml import Dataset
 from src.defs.layers import flatten, Flatten
+from src.utils import plotting
+from src.utils.training import train
 
 
 # def model(idim, hdim: int = 300):
@@ -36,7 +39,7 @@ def optimizer(model, learning_rate: float = 1e-2):
         model.parameters(),
         lr=learning_rate,
         momentum=0.9,
-        # nesterov=True,
+        nesterov=True,
     )
 
 
@@ -58,7 +61,7 @@ class Net(nn.Module):
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
 
-        return F.log_softmax(x)#, dim=x.dim())
+        return F.log_softmax(x)
 
     def predict(self, x):
 
@@ -72,3 +75,22 @@ class Net(nn.Module):
                 ans.append(1)
 
         return torch.tensor(ans)
+
+
+def run(iargs):
+    dataset = Dataset(dimensions='3d')
+
+    model = Net(dataset.dimensions)
+
+    losses, accuracies = train(
+        model,
+        optimizer(model, learning_rate=1e-1),
+        criterion(),
+        dataset,
+        epochs=iargs.epochs,
+        print_frequency=iargs.print_freq,
+    )
+
+    if iargs.plot:
+        plotting.plot_loss(losses)
+        plotting.plot_accuracies(accuracies)

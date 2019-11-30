@@ -76,11 +76,15 @@ def train(
             optimizer.step()
 
             # Log performance
-            if i % print_frequency == 0:
+            if False and i % print_frequency == 0:
                 print("[{:>3d}/{:>3d}] Loss: {:.4f}".format(
                     i + 1, num_batches,
                     loss.item(),
                 ))
+
+            # Try to help memory constraints out
+            del x, y, scores
+            torch.cuda.empty_cache()
 
         accuracy = evaluate(l_validate, model)
 

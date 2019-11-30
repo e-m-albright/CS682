@@ -17,47 +17,13 @@ def run():
         print(mlp.test_mlp())
 
     elif iargs.model == "fc":
-        from src.data.ml import Dataset
         from src.models import fc
-        from src.utils import plotting
-        from src.utils.training import train
-
-        dataset = Dataset(dimensions='3d')
-
-        model = fc.Net(dataset.dimensions)
-        optimizer = fc.optimizer(model, learning_rate=1e-1)
-        criterion = fc.criterion()
-
-        losses, accuracies = train(
-            model,
-            optimizer,
-            criterion,
-            dataset,
-            epochs=iargs.epochs,
-            print_frequency=iargs.print_freq,
-        )
-
-        if iargs.plot:
-            plotting.plot_loss(losses)
-            plotting.plot_accuracies(accuracies)
+        # epochs recommended above 80 - 100
+        fc.run(iargs)
 
     elif iargs.model in ["conv2d", "2d"]:
-        from src.data.ml import Dataset
         from src.models import conv2d
-        from src.utils import hyper, plotting
-
-        dataset = Dataset(dimensions='2d')
-
-        hyper.train(
-            conv2d.model,
-            conv2d.optimizer,
-            conv2d.criterion,
-            dataset,
-            hyper.Hyperparameters(
-                epochs=iargs.epochs,
-                learning_rates=[1e-1, 1e-2, 1e-3, 1e-4],
-            )
-        )
+        conv2d.run(iargs)
 
     elif iargs.model in ["conv3d", "3d"]:
         from src.data.ml import Dataset

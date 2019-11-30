@@ -8,13 +8,17 @@ import torch.optim as optim
 import torchvision
 from torchvision.models import resnet
 
+from src.data.ml import Dataset
+from src.models import conv2d
+from src.utils import hyper, plotting
+
 
 def optimizer(model, learning_rate: float = 1e-2):
     return optim.SGD(
         model.parameters(),
         lr=learning_rate,
         momentum=0.9,
-        # nesterov=True,
+        nesterov=True,
     )
     # return optim.Adam(
     #     model.parameters(),
@@ -27,7 +31,7 @@ def criterion():
 
 
 def model(*args, **kwargs):
-    return SingleChannelResNet(
+    model = SingleChannelResNet(
         resnet.BasicBlock,  # block
         [2, 2, 2, 2],  # layers
         num_classes=2,
@@ -37,6 +41,35 @@ def model(*args, **kwargs):
         replace_stride_with_dilation=None,
         norm_layer=None
     )
+
+    # Unfreeze / allow training (might not actually be frozen to start with though)
+    for params in model.parameters():
+        params.requires_grad = True
+
+    return model
+
+
+class Net(nn.Module):
+    def __init__(self, idims):
+        super(Net, self).__init__()
+        self.conv1 = nn.Conv2d(1, 6, 5)
+        self.pool = nn.MaxPool2d(2, 2)
+        self.conv2 = nn.Conv2d(6, 16, 5)
+        # self.fc1 = nn.Linear(16 * 5 * 5, 120)
+        self.fc1 = nn.Linear(57344, 120)
+        self.fc2 = nn.Linear(120, 84)
+        self.fc3 = nn.Linear(84, 2)
+
+    def forward(self, x):
+        x = self.pool(F.relu(self.conv1(x)))
+        x = self.pool(F.relu(self.conv2(x)))
+        print("FOFO", x.shape)
+        # x = x.view(-1, 16 * 5 * 5)
+        x = x.view(-1, 57344)
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
 
 
 class SingleChannelResNet(nn.Module):
@@ -136,3 +169,17 @@ class SingleChannelResNet(nn.Module):
     # Allow for accessing forward method in a inherited class
     forward = _forward
 
+
+def run(iargs):
+    dataset = Dataset(dimensions='2d')
+
+    hyper.train(
+        model,
+        optimizer,
+        criterion,
+        dataset,
+        hyper.Hyperparameters(
+            epochs=iargs.epochs,
+            learning_rates=[1e-1, 1e-2, 1e-3],
+        )
+    )
