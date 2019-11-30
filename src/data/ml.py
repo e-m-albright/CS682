@@ -72,10 +72,8 @@ class Dataset:
         """
         Get brain scans as labeled data, partitioned into Train, Validate, and Test
 
-        :param layout: optional, supply if you already have a layout on hand
-        :param limit: TODO I'm figuring out some memory constraints, the data if mishandled can exceed memory
+        :param limit: The data can quite easily exceed memory available
 
-        TODO how am I going to cope with the memory issue?
         64 * 64 * 30 = Per TimeStep (122,880)
 
         dtype is <f4, for little endian, 4 bit float (Did I see it was float32 at one point?)

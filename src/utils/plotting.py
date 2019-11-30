@@ -13,71 +13,50 @@ def plot_accuracies(accuracies: list):
     plt.show()
 
 
-# from src.data.ml import Dataset
-# from src.utils.plotting import show_slices
-# d = Dataset()
-# t,l = d.train
-# s = t[0]
-# show_slices(s[15, :, :], s[:, 28, :], s[:, :, 32])
-#
-# avg_scan = s.mean(dim=0)
-# # plt.imshow(  tensor_image.permute(1, 2, 0)  )
-# # plt.imshow(avg_scan.view(1, 64, 64))
+def load_show_slices():
+    """
+    TODO
 
-"""
-s.shape
-from src.data.ml import Dataset
-from src.utils.plotting import show_slices
-d = Dataset(dimensions="2d",scale=5./6)
-t,l = d.train
-s = t[0]
-show_slices([s[15, :, :], s[:, 20, :], s[:, :, 24]])
-s.shape
-from src.data.ml import Dataset
-from src.utils.plotting import show_slices
-d = Dataset(dimensions="2d")
-t,l = d.train
-s = t[0]
-show_slices([s[:, 16, :], s[:, :, 16]])
-s.shape
-from matplotlib import pyplot as plt
-plt.imshow(s.T, cmap="gray")
+    def imshow(inp, title=None):
+        inp = inp.numpy().transpose((1, 2, 0))
+        # plt.figure(figsize=(10, 10))
+        plt.axis('off')
+        plt.imshow(inp)
+        if title is not None:
+            plt.title(title)
+        plt.pause(0.001)
 
-# SHOW THE AVERAGE
-plt.imshow(s[0,:,:].T, cmap="gray")
-30 * 44 * 40
+    def show_databatch(inputs, classes):
+        out = torchvision.utils.make_grid(inputs)
+        imshow(out, title=[class_names[x] for x in classes])
 
+    # Get a batch of training data
+    inputs, classes = next(iter(dataloaders[TRAIN]))
+    show_databatch(inputs, classes)
+    """
 
-def imshow(inp, title=None):
-    inp = inp.numpy().transpose((1, 2, 0))
-    # plt.figure(figsize=(10, 10))
-    plt.axis('off')
-    plt.imshow(inp)
-    if title is not None:
-        plt.title(title)
-    plt.pause(0.001)
+    from src.data.ml import Dataset
 
-def show_databatch(inputs, classes):
-    out = torchvision.utils.make_grid(inputs)
-    imshow(out, title=[class_names[x] for x in classes])
+    d = Dataset()
+    t, l = d.train
+    s = t[0]
+    show_slices([s[15, :, :], s[:, 28, :], s[:, :, 32]])
 
-# Get a batch of training data
-inputs, classes = next(iter(dataloaders[TRAIN]))
-show_databatch(inputs, classes)
-"""
+    # Show single
+    # plt.imshow(s[0, :, :].T, cmap="gray")
+
 
 def show_slices(slices):
-    """ Function to display row of image slices """
+    """Function to display row of image slices"""
     fig, axes = plt.subplots(1, len(slices))
     for i, slice in enumerate(slices):
         axes[i].imshow(slice.T, cmap="gray", origin="lower")
 
-    plt.suptitle("Center slices for EPI image")
+    plt.suptitle("Slices")
 
 
-def show_experimental_scans():
+def load_show_experimental_scans():
     from nilearn import plotting
-    from nilearn import image
     from src.data import experiment
 
     layout = experiment.get_food_temptation_data()
@@ -90,7 +69,7 @@ def show_experimental_scans():
 
     scans.orthoview()
 
-    show_variance(scans)
+    _show_variance(scans)
 
     # pick a single scan to show
     single_scan = scans.slicer[:, :, :, 0]
@@ -108,7 +87,7 @@ def show_experimental_scans():
     plotting.plot_anat(single_scan)
 
 
-def show_variance(scans):
+def _show_variance(scans):
     d = scans.get_data()
     # Where in the image is there actually any information for classification?
 
