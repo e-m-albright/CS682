@@ -9,7 +9,6 @@ import torchvision
 from torchvision.models import resnet
 
 from src.data.ml import Dataset
-from src.models import conv2d
 from src.utils import hyper, plotting
 
 
