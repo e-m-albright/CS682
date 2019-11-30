@@ -21,6 +21,8 @@ def run():
 
     elif iargs.model in ["conv2d", "2d"]:
         from src.models import conv2d
+        # stabilizes around 300 - 350 epochs
+        # might be different if we add in more participants
         conv2d.run(iargs)
 
     elif iargs.model in ["conv3d", "3d"]:

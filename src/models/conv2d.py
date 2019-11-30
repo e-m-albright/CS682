@@ -19,10 +19,6 @@ def optimizer(model, learning_rate: float = 1e-2):
         momentum=0.9,
         nesterov=True,
     )
-    # return optim.Adam(
-    #     model.parameters(),
-    #     lr=learning_rate,
-    # )
 
 
 def criterion():
@@ -48,29 +44,9 @@ def model(*args, **kwargs):
     return model
 
 
-class Net(nn.Module):
-    def __init__(self, idims):
-        super(Net, self).__init__()
-        self.conv1 = nn.Conv2d(1, 6, 5)
-        self.pool = nn.MaxPool2d(2, 2)
-        self.conv2 = nn.Conv2d(6, 16, 5)
-        # self.fc1 = nn.Linear(16 * 5 * 5, 120)
-        self.fc1 = nn.Linear(57344, 120)
-        self.fc2 = nn.Linear(120, 84)
-        self.fc3 = nn.Linear(84, 2)
-
-    def forward(self, x):
-        x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.relu(self.conv2(x)))
-        print("FOFO", x.shape)
-        # x = x.view(-1, 16 * 5 * 5)
-        x = x.view(-1, 57344)
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
-        return x
-
-
+# -----------------------------------------
+# Sourced from torchvision.models.resnet
+# -----------------------------------------
 class SingleChannelResNet(nn.Module):
 
     def __init__(self, block, layers, num_classes=1000, zero_init_residual=False,
@@ -179,6 +155,7 @@ def run(iargs):
         dataset,
         hyper.Hyperparameters(
             epochs=iargs.epochs,
+            # 1e-3 better by a little, surprisingly?
             learning_rates=[1e-2, 1e-3],
         )
     )
