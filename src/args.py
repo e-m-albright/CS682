@@ -7,7 +7,7 @@ parser.add_argument(
     "-m", "--model",
     nargs="?",
     choices=["svm", "mlp", "fc", "2d", "conv2d", "3d", "conv3d"],
-    default="conv3d",
+    default="3d",
     type=str,
 )
 parser.add_argument(

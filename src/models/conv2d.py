@@ -170,7 +170,7 @@ class SingleChannelResNet(nn.Module):
 
 
 def run(iargs):
-    dataset = Dataset(dimensions='2d')
+    dataset = Dataset(dimensions='2d', limit=6)
 
     hyper.train(
         model,
@@ -179,6 +179,6 @@ def run(iargs):
         dataset,
         hyper.Hyperparameters(
             epochs=iargs.epochs,
-            learning_rates=[1e-1, 1e-2, 1e-3],
+            learning_rates=[1e-2, 1e-3],
         )
     )
