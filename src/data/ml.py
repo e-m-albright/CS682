@@ -15,8 +15,15 @@ BATCH_SIZE = 64
 
 
 class Dataset:
-    def __init__(self, standardize=True, dimensions: str = "3d", scale=1.0, limit=3, splits=TVT_SPLITS):
+    def __init__(self,
+                 standardize=True,
+                 dimensions: str = "3d",
+                 scale=1.0,
+                 limit=3,
+                 splits=TVT_SPLITS,
+                 batch_size=BATCH_SIZE):
         self._d = dimensions
+        self._bs = batch_size
 
         X, y = self._get_experimental_data(limit=limit)
         dataset = self._transform(X, y, standardize=standardize, scale=scale)
@@ -200,7 +207,7 @@ class Dataset:
         return [
             DataLoader(
                 dataset,
-                batch_size=BATCH_SIZE,
+                batch_size=self._bs,
             ) for dataset in [
                 self._train,
                 self._val,

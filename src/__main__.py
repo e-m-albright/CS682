@@ -16,17 +16,20 @@ def run():
 
     elif iargs.model == "fc":
         from src.models import fc
-        # epochs recommended above 80 - 100
+        # stabilizes around 80 - 100 epochs @ 70%
         fc.run(iargs)
 
     elif iargs.model in ["conv2d", "2d"]:
         from src.models import conv2d
-        # stabilizes around 300 - 350 epochs
+        # stabilizes around 300 - 350 epochs @ 83%
         # might be different if we add in more participants
         conv2d.run(iargs)
 
     elif iargs.model in ["conv3d", "3d"]:
         from src.models import conv3d
+        # stabilizes around 200+ epochs @ 84%
+        # (might get to this point thanks to sgd/nesterov decay)
+        # very very slow to run (3+ hours)
         conv3d.run(iargs)
 
 

@@ -30,6 +30,9 @@ def model(*args, **kwargs):
     return r3d_18()
 
 
+# -----------------------------------------
+# Sourced from torchvision.models.video
+# -----------------------------------------
 class Conv3DSimple(nn.Conv3d):
     def __init__(self,
                  in_planes,
@@ -347,6 +350,7 @@ def r2plus1d_18(**kwargs):
 
 def run(iargs):
     dataset = Dataset(dimensions='3d', scale=5./6, limit=6)
+    # dataset = Dataset(dimensions='3d', batch_size=32, limit=10)
 
     hyper.train(
         model,
@@ -355,6 +359,7 @@ def run(iargs):
         dataset,
         hyper.Hyperparameters(
             epochs=iargs.epochs,
-            learning_rates=[1e-1, 1e-2, 1e-3, 1e-4],
+            # TODO can try near this, but this magnitude better than 1e-2 and 1e-4 by a lot
+            learning_rates=[1e-3],
         )
     )

@@ -182,6 +182,61 @@ will begin the process of looking for refinements and innovations alluded to in 
 transitioning the task to object detection if I can.
 
 
+% ----------------------------------------------------------------------
+% TODO
+% ----------------------------------------------------------------------
+\section{TODO}\label{sec:todo}
+
+NN project
+- 2d hyperparameters, let's use a LR scheduler? LR spikes all over the place still, why?
+
+- 3d CNN - typically meant for video classification using time as the third axis,
+here we are not using time, though that is a dimension we have access to,
+though doesn't make sense for this experiment/project to try to add in
+- https://pytorch.org/docs/stable/torchvision/models.html#video-classification
+
+- scheduler / hyperparams / diff architectures (just go with res3d, res2d+1d, mix three types
+- cut batch size to avoid scaling down images (TRIED NO BUENO?)
+
+be sure to talk about everything in paper
+
+normalization/mean image
+interpolation
+wrestling with memory constraints (batch size / 3d data huge for cpu/gpu, dataset pretty large in general for ram) slow learning, tapering off learning
+different styles of 1d (unfurl 3d, 2d) 2d (mean flattened, one slice) 3d (scale, orig)
+LR explorations
+sanity checks on brain image data, impossible for me to spot the differences
+
+batch_size and interpolation hard to juggle too?
+3d feels like "luck" plays a big part of getting training to catch/start
+seems like scaling down is pretty important and I have better luck with larger batch sizes (meaning scale down is crucial) wonder if aggressive scale down is worthwhile, like over 3./4, image gets real grainy real fast)
+
+images:
+LR / accuracy measures, of diff approaches
+hi res, mid res, interpolated down res brain scan examples,
+2d slice example
+total training time? num features comparison
+average slice image
+graphs from 2d training, 3d takes legit 2-3 hours for 200 epochs on 6 subjects with 5./6 & 7. / 2.
+
+inclusion of more ppts/subjects means more training time (val/test are of same patients,
+hence more individual brain shapes means more general, but longer to learn)
+20 epochs to see liftoff of 55% with 10 ppts, vs quicker with 6ppts
+
+image segmentation attempt?
+saliency maps?
+filter views?
+
+torch save models - can eval that way
+host for downloads?
+
+future works
+better gpu / computer might be important, the 3d models are real fucking beasts to train, and their data is large as fuck
+model ensemble (free extra few percent perf)
+
+findings: 3d is cool, but crazy prohibitively slow and not much better than 2d without more refinements. IMHO theres
+promise still in exploring it, but given the inexcusable runtime and datasize 2d is probably worth more investment
+unless better hardware or serious effort is expended in getting it differentiable
 
 % ----------------------------------------------------------------------
 % END
