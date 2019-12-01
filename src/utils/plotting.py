@@ -1,22 +1,45 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 import seaborn as sns
 
-
-def plot_loss(losses: list):
-    ax = sns.lineplot(range(len(losses)), losses)
-    plt.show()
+from src import PLOTS_DIR
 
 
-def plot_accuracies(accuracies: list):
-    ax = sns.lineplot(range(len(accuracies)), accuracies)
-    plt.show()
+# TODO hardcode names begone
+def plot_loss(losses: list, num_batches: int, name: str):
+    # Use num_batches to smooth/avg?
+    ax = sns.lineplot(
+        range(len(losses)),
+        losses,
+    )
+    ax.set_title('Loss')
+    ax.set_ylabel('Cross Entropy Loss')
+    ax.set_xlabel('Epoch/Batch Iterations')
+
+    os.makedirs(PLOTS_DIR, exist_ok=True)
+    path = os.path.join(PLOTS_DIR, name + "_loss.png")
+    plt.savefig(path)
 
 
+# TODO other metrics, test/val
+def plot_accuracies(accuracies: list, name: str):
+    ax = sns.lineplot(
+        range(len(accuracies)),
+        accuracies,
+    )
+    ax.set_title('Validation Accuracy')
+    ax.set_ylabel('Accuracy')
+    ax.set_xlabel('Epoch')
+
+    os.makedirs(PLOTS_DIR, exist_ok=True)
+    path = os.path.join(PLOTS_DIR, name + "_accuracy.png")
+    plt.savefig(path)
+
+
+# TODO
 def load_show_slices():
     """
-    TODO
-
     def imshow(inp, title=None):
         inp = inp.numpy().transpose((1, 2, 0))
         # plt.figure(figsize=(10, 10))

@@ -9,7 +9,7 @@ import torchvision
 from torchvision.models import resnet
 
 from src.data.ml import Dataset
-from src.utils import hyper, plotting
+from src.utils import hyper, training, reload, plotting
 
 
 def optimizer(model, learning_rate: float = 1e-2):
@@ -146,16 +146,40 @@ class SingleChannelResNet(nn.Module):
 
 
 def run(iargs):
-    dataset = Dataset(dimensions='2d', limit=6)
+    dimensions = '2d'
+    subjects = 6
+    learning_rate = 1e-3
 
-    hyper.train(
-        model,
-        optimizer,
-        criterion,
-        dataset,
-        hyper.Hyperparameters(
-            epochs=iargs.epochs,
-            # 1e-3 better by a little, surprisingly?
-            learning_rates=[1e-2, 1e-3],
-        )
+    # name doesn't fully convey but helpful enough to recall most details
+    name = "conv_{}_s{}_lr{}_e{}".format(
+        dimensions,
+        subjects,
+        learning_rate,
+        iargs.epochs,
     )
+
+    dataset = Dataset(dimensions=dimensions, limit=subjects)
+
+    conv2d_model = model()
+
+    if iargs.load:
+        reload.load(conv2d_model, iargs.load)
+
+    losses, accuracies = training.train(
+        conv2d_model,
+        optimizer(conv2d_model, learning_rate=learning_rate),
+        criterion(),
+        dataset,
+        epochs=iargs.epochs,
+        print_frequency=iargs.print_freq,
+    )
+
+    if iargs.plot:
+        l_train, _, _ = dataset.get_loaders()
+        num_batches = len(l_train)
+
+        plotting.plot_loss(losses, num_batches, name)
+        plotting.plot_accuracies(accuracies, name)
+
+    if iargs.save:
+        reload.save(conv2d_model, name)

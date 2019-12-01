@@ -91,4 +91,5 @@ def train(
         losses.append(round_loss / num_batches)
         accuracies.append(accuracy)
 
+    print("\nDone training!\n")
     return losses, accuracies

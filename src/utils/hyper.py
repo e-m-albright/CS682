@@ -21,6 +21,7 @@ class Hyperparameters:
 
 def train(model_fn, optimizer_fn, criterion_fn, dataset: Dataset, h: Hyperparameters):
 
+    models, losses, accuracies = [], [], []
     for lr in h.learning_rates:
         print("\nLR: {}".format(lr))
 
@@ -28,10 +29,16 @@ def train(model_fn, optimizer_fn, criterion_fn, dataset: Dataset, h: Hyperparame
         optimizer = optimizer_fn(model, learning_rate=lr)
         criterion = criterion_fn()
 
-        vanilla_train(
+        l, a = vanilla_train(
             model,
             optimizer,
             criterion,
             dataset,
             epochs=h.epochs,
         )
+
+        models.append(model)
+        losses.append(l)
+        accuracies.append(a)
+
+    return models, losses, accuracies
