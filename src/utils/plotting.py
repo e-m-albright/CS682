@@ -8,6 +8,8 @@ from src import PLOTS_DIR
 
 # TODO hardcode names begone
 def plot_loss(losses: list, num_batches: int, name: str):
+    plt.figure()
+
     # Use num_batches to smooth/avg?
     ax = sns.lineplot(
         range(len(losses)),
@@ -24,6 +26,8 @@ def plot_loss(losses: list, num_batches: int, name: str):
 
 # TODO other metrics, test/val
 def plot_accuracies(accuracies: list, name: str):
+    plt.figure()
+
     ax = sns.lineplot(
         range(len(accuracies)),
         accuracies,
@@ -71,6 +75,8 @@ def load_show_slices():
 
 def show_slices(slices):
     """Function to display row of image slices"""
+    plt.figure()
+
     fig, axes = plt.subplots(1, len(slices))
     for i, slice in enumerate(slices):
         axes[i].imshow(slice.T, cmap="gray", origin="lower")
@@ -97,6 +103,8 @@ def load_show_experimental_scans():
     # pick a single scan to show
     single_scan = scans.slicer[:, :, :, 0]
 
+    _show_raw(single_scan)
+
     plotting.plot_stat_map(
         single_scan,
         # threshold=30,
@@ -110,6 +118,12 @@ def load_show_experimental_scans():
     plotting.plot_anat(single_scan)
 
 
+def _show_raw(scan):
+    d = scan.get_data()
+    halfway = [int(i / 2) for i in d.shape]
+    show_slices([d[halfway[0], :, :], d[:, halfway[1], :], d[:, :, halfway[2]]])
+
+
 def _show_variance(scans):
     d = scans.get_data()
     # Where in the image is there actually any information for classification?
@@ -121,3 +135,14 @@ def _show_variance(scans):
     halfway = [int(i / 2) for i in v.shape]
 
     show_slices([v[halfway[0], :, :], v[:, halfway[1], :], v[:, :, halfway[2]]])
+
+
+def _plot_acc_dump(path: str):
+    plt.figure()
+
+    z = np.fromfile(path)
+    ax = sns.lineplot(range(len(z)), z, color="orange")
+    ax.set_title("Conv2d Cold Start")
+    ax.set_ylabel("Validation Accuracy")
+    ax.set_xlabel("Epoch")
+    plt.show()
