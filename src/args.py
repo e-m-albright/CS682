@@ -16,6 +16,11 @@ parser.add_argument(
     type=int,
 )
 parser.add_argument(
+    "--subjects",
+    default=6,
+    type=int,
+)
+parser.add_argument(
     "-p", "--plot",
     action="store_true",
     default=False,

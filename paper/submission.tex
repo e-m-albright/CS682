@@ -38,7 +38,7 @@ University of Massachusetts Amherst\\
 
 %-------------------------------------------------------------------------
 \begin{abstract}
-   Abstract placeholder
+   Abstract placeholder (sub 300 words)
 \end{abstract}
 
 % ----------------------------------------------------------------------
@@ -74,6 +74,9 @@ dimensionality of their 3d inputs.
 % PROBLEM STATEMENT
 % ----------------------------------------------------------------------
 \section{Problem Statement}\label{sec:problem-statement}
+
+(BACKGROUND / RELATED)
+
 The dataset to be used is a set of neuro-imaging scans from a cohort of 30 healthy, young women in the
 Netherlands circa 2013 who were presented with various grids of images featuring
 either neutral entities, (e.g.\ office chairs, windows, jackets) or foods~\cite{smeets2013allured}.
@@ -237,6 +240,53 @@ model ensemble (free extra few percent perf)
 findings: 3d is cool, but crazy prohibitively slow and not much better than 2d without more refinements. IMHO theres
 promise still in exploring it, but given the inexcusable runtime and datasize 2d is probably worth more investment
 unless better hardware or serious effort is expended in getting it differentiable
+
+PUT BRAIN SCANS IN SUPPLEMENTARY?
+
+abstract > intro > background > related
+methods/approach > results > discussion > references
+6 pages? 7 maybe at most
+
+gradual warm-start improvements?
+variations on models? meh
+
+unsupervised segmentation - little hard
+
+surprisingly bad results on warm starting expansion to new subjects - old same subjects takes a little while to stabilize
+but it gets back to 83% without much fuss, probably LR is a little high to start with and the decay helps a lot.
+bounces down for a while, bounces up for a while. breaking 90% which is very cool, might mean warm start has best potential
+
+WORK ON GETTING PARAM NUMBERS AND
+DIFFERENT METRICS (AUC PLEASE, F1 PLEASE)
+2d is enough
+
+Submit your final submission through OpenReview. You will submit a single pdf file:
+A pdf file of your final report
+
+(OPTIONAL) supplementary can be concatenated at the end of the final report
+Report. The following is a suggested structure for the report:
+Title, Author(s)
+
+Abstract: It should not be more than 300 words
+
+Introduction: this section introduces your problem, and the overall plan for approaching your problem
+Background/Related Work: This section discusses relevant literature for your project
+Approach: This section details the framework of your project. Be specific, which means you might want to include equations, figures, plots, etc
+Experiment: This section begins with what kind of experiments you're doing, what kind of dataset(s) you're using, and what is the way you measure or evaluate your results. It then shows in details the results of your experiments. By details, we mean both quantitative evaluations (show numbers, figures, tables, etc) as well as qualitative results (show images, example results, etc).
+Conclusion: What have you learned? Suggest future ideas.
+References: This is absolutely necessary.
+Supplementary Material is not counted toward your 6-8 page limit. It is optional and is supposed to contain less important results/experiments/etc not critical for understanding the main report.
+
+try different architectures - more depth?
+see if we can break 85% to 90%, talk about potential data mislabeling frustration as a barrier to higher results possibly
+
+you are expected to show substantially more experiments and results with NN-related methods
+( :(  lame)
+
+~\cite{he2016deep} resnet
+~\cite{tran2018closer} 3d/time resnet
+~\cite{hara3dcnns} 3d cnn pt1?
+
 
 % ----------------------------------------------------------------------
 % END

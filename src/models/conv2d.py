@@ -147,18 +147,17 @@ class SingleChannelResNet(nn.Module):
 
 def run(iargs):
     dimensions = '2d'
-    subjects = 6
     learning_rate = 1e-3
 
     # name doesn't fully convey but helpful enough to recall most details
     name = "conv_{}_s{}_lr{}_e{}".format(
         dimensions,
-        subjects,
+        iargs.subjects,
         learning_rate,
         iargs.epochs,
     )
 
-    dataset = Dataset(dimensions=dimensions, limit=subjects)
+    dataset = Dataset(dimensions=dimensions, limit=iargs.subjects)
 
     conv2d_model = model()
 

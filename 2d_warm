@@ -1,0 +1,302 @@
+Epoch: 1
+285 / 435 correct (%65.52)
+
+Epoch: 2
+299 / 435 correct (%68.74)
+
+Epoch: 3
+347 / 435 correct (%79.77)
+
+Epoch: 4
+362 / 435 correct (%83.22)
+
+Epoch: 5
+333 / 435 correct (%76.55)
+
+Epoch: 6
+330 / 435 correct (%75.86)
+
+Epoch: 7
+341 / 435 correct (%78.39)
+
+Epoch: 8
+365 / 435 correct (%83.91)
+
+Epoch: 9
+355 / 435 correct (%81.61)
+
+Epoch: 10
+327 / 435 correct (%75.17)
+
+Epoch: 11
+315 / 435 correct (%72.41)
+
+Epoch: 12
+335 / 435 correct (%77.01)
+
+Epoch: 13
+355 / 435 correct (%81.61)
+
+Epoch: 14
+350 / 435 correct (%80.46)
+
+Epoch: 15
+350 / 435 correct (%80.46)
+
+Epoch: 16
+334 / 435 correct (%76.78)
+
+Epoch: 17
+314 / 435 correct (%72.18)
+
+Epoch: 18
+346 / 435 correct (%79.54)
+
+Epoch: 19
+315 / 435 correct (%72.41)
+
+Epoch: 20
+334 / 435 correct (%76.78)
+
+Epoch: 21
+334 / 435 correct (%76.78)
+
+Epoch: 22
+359 / 435 correct (%82.53)
+
+Epoch: 23
+312 / 435 correct (%71.72)
+
+Epoch: 24
+369 / 435 correct (%84.83)
+
+Epoch: 25
+331 / 435 correct (%76.09)
+
+Epoch: 26
+347 / 435 correct (%79.77)
+
+Epoch: 27
+330 / 435 correct (%75.86)
+
+Epoch: 28
+311 / 435 correct (%71.49)
+
+Epoch: 29
+337 / 435 correct (%77.47)
+
+Epoch: 30
+356 / 435 correct (%81.84)
+
+Epoch: 31
+322 / 435 correct (%74.02)
+
+Epoch: 32
+377 / 435 correct (%86.67)
+
+Epoch: 33
+307 / 435 correct (%70.57)
+
+Epoch: 34
+380 / 435 correct (%87.36)
+
+Epoch: 35
+332 / 435 correct (%76.32)
+
+Epoch: 36
+353 / 435 correct (%81.15)
+
+Epoch: 37
+334 / 435 correct (%76.78)
+
+Epoch: 38
+330 / 435 correct (%75.86)
+
+Epoch: 39
+301 / 435 correct (%69.20)
+
+Epoch: 40
+332 / 435 correct (%76.32)
+
+Epoch: 41
+332 / 435 correct (%76.32)
+
+Epoch: 42
+318 / 435 correct (%73.10)
+
+Epoch: 43
+353 / 435 correct (%81.15)
+
+Epoch: 44
+371 / 435 correct (%85.29)
+
+Epoch: 45
+327 / 435 correct (%75.17)
+
+Epoch: 46
+286 / 435 correct (%65.75)
+
+Epoch: 47
+340 / 435 correct (%78.16)
+
+Epoch: 48
+341 / 435 correct (%78.39)
+
+Epoch: 49
+360 / 435 correct (%82.76)
+
+Epoch: 50
+362 / 435 correct (%83.22)
+
+Epoch: 51
+389 / 435 correct (%89.43)
+
+Epoch: 52
+345 / 435 correct (%79.31)
+
+Epoch: 53
+367 / 435 correct (%84.37)
+
+Epoch: 54
+348 / 435 correct (%80.00)
+
+Epoch: 55
+372 / 435 correct (%85.52)
+
+Epoch: 56
+342 / 435 correct (%78.62)
+
+Epoch: 57
+352 / 435 correct (%80.92)
+
+Epoch: 58
+362 / 435 correct (%83.22)
+
+Epoch: 59
+393 / 435 correct (%90.34)
+
+Epoch: 60
+379 / 435 correct (%87.13)
+
+Epoch: 61
+382 / 435 correct (%87.82)
+
+Epoch: 62
+372 / 435 correct (%85.52)
+
+Epoch: 63
+376 / 435 correct (%86.44)
+
+Epoch: 64
+390 / 435 correct (%89.66)
+
+Epoch: 65
+374 / 435 correct (%85.98)
+
+Epoch: 66
+376 / 435 correct (%86.44)
+
+Epoch: 67
+377 / 435 correct (%86.67)
+
+Epoch: 68
+382 / 435 correct (%87.82)
+
+Epoch: 69
+399 / 435 correct (%91.72)
+
+Epoch: 70
+385 / 435 correct (%88.51)
+
+Epoch: 71
+390 / 435 correct (%89.66)
+
+Epoch: 72
+376 / 435 correct (%86.44)
+
+Epoch: 73
+366 / 435 correct (%84.14)
+
+Epoch: 74
+391 / 435 correct (%89.89)
+
+Epoch: 75
+391 / 435 correct (%89.89)
+
+Epoch: 76
+390 / 435 correct (%89.66)
+
+Epoch: 77
+389 / 435 correct (%89.43)
+
+Epoch: 78
+388 / 435 correct (%89.20)
+
+Epoch: 79
+363 / 435 correct (%83.45)
+
+Epoch: 80
+385 / 435 correct (%88.51)
+
+Epoch: 81
+390 / 435 correct (%89.66)
+
+Epoch: 82
+385 / 435 correct (%88.51)
+
+Epoch: 83
+362 / 435 correct (%83.22)
+
+Epoch: 84
+381 / 435 correct (%87.59)
+
+Epoch: 85
+386 / 435 correct (%88.74)
+
+Epoch: 86
+358 / 435 correct (%82.30)
+
+Epoch: 87
+376 / 435 correct (%86.44)
+
+Epoch: 88
+361 / 435 correct (%82.99)
+
+Epoch: 89
+347 / 435 correct (%79.77)
+
+Epoch: 90
+359 / 435 correct (%82.53)
+
+Epoch: 91
+358 / 435 correct (%82.30)
+
+Epoch: 92
+374 / 435 correct (%85.98)
+
+Epoch: 93
+393 / 435 correct (%90.34)
+
+Epoch: 94
+383 / 435 correct (%88.05)
+
+Epoch: 95
+379 / 435 correct (%87.13)
+
+Epoch: 96
+388 / 435 correct (%89.20)
+
+Epoch: 97
+393 / 435 correct (%90.34)
+
+Epoch: 98
+374 / 435 correct (%85.98)
+
+Epoch: 99
+392 / 435 correct (%90.11)
+
+Epoch: 100
+390 / 435 correct (%89.66)
+
+Done training!
+

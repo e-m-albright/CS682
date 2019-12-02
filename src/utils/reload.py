@@ -18,10 +18,8 @@ def save(model, name):
 
 
 def load(model, name):
-    torch.load()
-
     path = os.path.join(MODELS_DIR, name + PYTORCH_STATE_EXT)
-    print("Saving model state to {}".format(path))
+    print("Loading model state from {}".format(path))
 
     model.load_state_dict(torch.load(path))
     # model.eval
