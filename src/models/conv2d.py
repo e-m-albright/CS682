@@ -9,7 +9,7 @@ import torchvision
 from torchvision.models import resnet
 
 from src.data.ml import Dataset
-from src.utils import hyper, training, reload, plotting
+from src.utils import hyper, train, reload, plot
 
 
 def optimizer(model, learning_rate: float = 1e-2):
@@ -164,7 +164,7 @@ def run(iargs):
     if iargs.load:
         reload.load(conv2d_model, iargs.load)
 
-    losses, accuracies = training.train(
+    losses, accuracies = train.train(
         conv2d_model,
         optimizer(conv2d_model, learning_rate=learning_rate),
         criterion(),
@@ -177,8 +177,10 @@ def run(iargs):
         l_train, _, _ = dataset.get_loaders()
         num_batches = len(l_train)
 
-        plotting.plot_loss(losses, num_batches, name)
-        plotting.plot_accuracies(accuracies, name)
+        plot.plot_loss(losses, num_batches, name)
+        plot.plot_accuracies(accuracies, name)
 
     if iargs.save:
         reload.save(conv2d_model, name)
+
+    return conv2d_model

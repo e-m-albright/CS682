@@ -289,10 +289,29 @@ you are expected to show substantially more experiments and results with NN-rela
 data size tho -
 30x bigger (30 x 44 x 40) vs (44 x 40)
 
+Future works
+- could strive to refine 3d more, with more time and compute
+- unsupervised segmentation would be cool
+- find ways to not have to smoosh images for memory?
+- more visualizations? lack of color kinda sucks, saliency is weird, filters prob too
+
+ACTUAL FINAL WORK
+- check out filter viz
+- see about unsupervised
+- try 3d alternative archs? (dont really need to)
+- "none of my alterations to the model architecture worked that well, most did nothing, a few broke things, could still poke around more though"
+- better assessment metrics (f1s, auc)
+
 ~\cite{he2016deep} resnet
 ~\cite{tran2018closer} 3d/time resnet
 ~\cite{hara3dcnns} 3d cnn pt1?
 
+
+              nonfood        food
+precision    0.893162    0.935323
+recall       0.941441    0.882629
+f1           0.916667    0.908213
+support    222.000000  213.000000
 
 % ----------------------------------------------------------------------
 % END

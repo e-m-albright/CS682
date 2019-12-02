@@ -2,7 +2,7 @@
 Neural Network training and evaluation
 """
 from src.data.ml import Dataset
-from src.utils.training import train as vanilla_train
+from src.utils.train import train as vanilla_train
 
 
 LEARNING_RATES = [1e-1]

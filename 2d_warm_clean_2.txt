@@ -1,0 +1,389 @@
+682) evan@evan-XPS-15-9570:~$ python -m project -m 2d -e 120 -s -p -l conv_2d_s6_lr0.001_e500 --subjects 6
+Using device: cuda
+Using dtype: torch.float32
+Using dataset path: "/home/evan/workspace/scratch/cs682/project/data/ds000157"
+BIDS Layout: ...ch/cs682/project/data/ds000157 | Subjects: 30 | Sessions: 0 | Runs: 0
+Assigning data from subject 01
+Assigning data from subject 02
+Assigning data from subject 03
+Assigning data from subject 04
+Assigning data from subject 05
+Assigning data from subject 06
+Shaving bulk of empty space out of scans
+Before shave:  (2178, 30, 64, 64)
+After shave:  (2178, 30, 44, 40)
+Before downsampling: shape=torch.Size([2178, 1, 30, 44, 40]), features=52800
+After downsampling: shape=torch.Size([2178, 30, 44, 40]), features=52800
+Adding a channel dimension for convolutional networks
+Flattening axially for 2d view
+Loading model state from /home/evan/workspace/scratch/cs682/project/out/models/conv_2d_s6_lr0.001_e500.pt
+Training with 24 batches
+
+Epoch: 1
+256 / 435 correct (%58.85)
+
+Epoch: 2
+298 / 435 correct (%68.51)
+
+Epoch: 3
+330 / 435 correct (%75.86)
+
+Epoch: 4
+322 / 435 correct (%74.02)
+
+Epoch: 5
+310 / 435 correct (%71.26)
+
+Epoch: 6
+312 / 435 correct (%71.72)
+
+Epoch: 7
+313 / 435 correct (%71.95)
+
+Epoch: 8
+317 / 435 correct (%72.87)
+
+Epoch: 9
+290 / 435 correct (%66.67)
+
+Epoch: 10
+311 / 435 correct (%71.49)
+
+Epoch: 11
+313 / 435 correct (%71.95)
+
+Epoch: 12
+304 / 435 correct (%69.89)
+
+Epoch: 13
+347 / 435 correct (%79.77)
+
+Epoch: 14
+350 / 435 correct (%80.46)
+
+Epoch: 15
+328 / 435 correct (%75.40)
+
+Epoch: 16
+316 / 435 correct (%72.64)
+
+Epoch: 17
+323 / 435 correct (%74.25)
+
+Epoch: 18
+342 / 435 correct (%78.62)
+
+Epoch: 19
+307 / 435 correct (%70.57)
+
+Epoch: 20
+313 / 435 correct (%71.95)
+
+Epoch: 21
+333 / 435 correct (%76.55)
+
+Epoch: 22
+349 / 435 correct (%80.23)
+
+Epoch: 23
+303 / 435 correct (%69.66)
+
+Epoch: 24
+323 / 435 correct (%74.25)
+
+Epoch: 25
+305 / 435 correct (%70.11)
+
+Epoch: 26
+284 / 435 correct (%65.29)
+
+Epoch: 27
+345 / 435 correct (%79.31)
+
+Epoch: 28
+310 / 435 correct (%71.26)
+
+Epoch: 29
+313 / 435 correct (%71.95)
+
+Epoch: 30
+325 / 435 correct (%74.71)
+
+Epoch: 31
+334 / 435 correct (%76.78)
+
+Epoch: 32
+339 / 435 correct (%77.93)
+
+Epoch: 33
+360 / 435 correct (%82.76)
+
+Epoch: 34
+311 / 435 correct (%71.49)
+
+Epoch: 35
+361 / 435 correct (%82.99)
+
+Epoch: 36
+365 / 435 correct (%83.91)
+
+Epoch: 37
+340 / 435 correct (%78.16)
+
+Epoch: 38
+329 / 435 correct (%75.63)
+
+Epoch: 39
+359 / 435 correct (%82.53)
+
+Epoch: 40
+325 / 435 correct (%74.71)
+
+Epoch: 41
+351 / 435 correct (%80.69)
+
+Epoch: 42
+352 / 435 correct (%80.92)
+
+Epoch: 43
+344 / 435 correct (%79.08)
+
+Epoch: 44
+354 / 435 correct (%81.38)
+
+Epoch: 45
+366 / 435 correct (%84.14)
+
+Epoch: 46
+328 / 435 correct (%75.40)
+
+Epoch: 47
+325 / 435 correct (%74.71)
+
+Epoch: 48
+352 / 435 correct (%80.92)
+
+Epoch: 49
+336 / 435 correct (%77.24)
+
+Epoch: 50
+348 / 435 correct (%80.00)
+
+Epoch: 51
+328 / 435 correct (%75.40)
+
+Epoch: 52
+321 / 435 correct (%73.79)
+
+Epoch: 53
+317 / 435 correct (%72.87)
+
+Epoch: 54
+380 / 435 correct (%87.36)
+
+Epoch: 55
+349 / 435 correct (%80.23)
+
+Epoch: 56
+325 / 435 correct (%74.71)
+
+Epoch: 57
+342 / 435 correct (%78.62)
+
+Epoch: 58
+341 / 435 correct (%78.39)
+
+Epoch: 59
+382 / 435 correct (%87.82)
+
+Epoch: 60
+357 / 435 correct (%82.07)
+
+Epoch: 61
+361 / 435 correct (%82.99)
+
+Epoch: 62
+383 / 435 correct (%88.05)
+
+Epoch: 63
+334 / 435 correct (%76.78)
+
+Epoch: 64
+343 / 435 correct (%78.85)
+
+Epoch: 65
+359 / 435 correct (%82.53)
+
+Epoch: 66
+338 / 435 correct (%77.70)
+
+Epoch: 67
+330 / 435 correct (%75.86)
+
+Epoch: 68
+330 / 435 correct (%75.86)
+
+Epoch: 69
+312 / 435 correct (%71.72)
+
+Epoch: 70
+314 / 435 correct (%72.18)
+
+Epoch: 71
+354 / 435 correct (%81.38)
+
+Epoch: 72
+326 / 435 correct (%74.94)
+
+Epoch: 73
+340 / 435 correct (%78.16)
+
+Epoch: 74
+344 / 435 correct (%79.08)
+
+Epoch: 75
+356 / 435 correct (%81.84)
+
+Epoch: 76
+357 / 435 correct (%82.07)
+
+Epoch: 77
+369 / 435 correct (%84.83)
+
+Epoch: 78
+370 / 435 correct (%85.06)
+
+Epoch: 79
+359 / 435 correct (%82.53)
+
+Epoch: 80
+358 / 435 correct (%82.30)
+
+Epoch: 81
+358 / 435 correct (%82.30)
+
+Epoch: 82
+339 / 435 correct (%77.93)
+
+Epoch: 83
+360 / 435 correct (%82.76)
+
+Epoch: 84
+356 / 435 correct (%81.84)
+
+Epoch: 85
+377 / 435 correct (%86.67)
+
+Epoch: 86
+366 / 435 correct (%84.14)
+
+Epoch: 87
+381 / 435 correct (%87.59)
+
+Epoch: 88
+391 / 435 correct (%89.89)
+
+Epoch: 89
+377 / 435 correct (%86.67)
+
+Epoch: 90
+387 / 435 correct (%88.97)
+
+Epoch: 91
+375 / 435 correct (%86.21)
+
+Epoch: 92
+356 / 435 correct (%81.84)
+
+Epoch: 93
+388 / 435 correct (%89.20)
+
+Epoch: 94
+359 / 435 correct (%82.53)
+
+Epoch: 95
+381 / 435 correct (%87.59)
+
+Epoch: 96
+340 / 435 correct (%78.16)
+
+Epoch: 97
+372 / 435 correct (%85.52)
+
+Epoch: 98
+358 / 435 correct (%82.30)
+
+Epoch: 99
+343 / 435 correct (%78.85)
+
+Epoch: 100
+357 / 435 correct (%82.07)
+
+Epoch: 101
+348 / 435 correct (%80.00)
+
+Epoch: 102
+369 / 435 correct (%84.83)
+
+Epoch: 103
+325 / 435 correct (%74.71)
+
+Epoch: 104
+329 / 435 correct (%75.63)
+
+Epoch: 105
+338 / 435 correct (%77.70)
+
+Epoch: 106
+322 / 435 correct (%74.02)
+
+Epoch: 107
+348 / 435 correct (%80.00)
+
+Epoch: 108
+356 / 435 correct (%81.84)
+
+Epoch: 109
+378 / 435 correct (%86.90)
+
+Epoch: 110
+360 / 435 correct (%82.76)
+
+Epoch: 111
+362 / 435 correct (%83.22)
+
+Epoch: 112
+344 / 435 correct (%79.08)
+
+Epoch: 113
+341 / 435 correct (%78.39)
+
+Epoch: 114
+385 / 435 correct (%88.51)
+
+Epoch: 115
+395 / 435 correct (%90.80)
+
+Epoch: 116
+382 / 435 correct (%87.82)
+
+Epoch: 117
+396 / 435 correct (%91.03)
+
+Epoch: 118
+396 / 435 correct (%91.03)
+
+Epoch: 119
+397 / 435 correct (%91.26)
+
+Epoch: 120
+397 / 435 correct (%91.26)
+              nonfood        food
+precision    0.893162    0.935323
+recall       0.941441    0.882629
+f1           0.916667    0.908213
+support    222.000000  213.000000
+
+Done training!
+
+Saving model state to /home/evan/workspace/scratch/cs682/project/out/models/conv_2d_s6_lr0.001_e120.pt

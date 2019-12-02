@@ -1,6 +1,7 @@
 """
 Neural Network training and evaluation
 """
+import pandas as pd
 from sklearn import metrics
 
 import torch
@@ -10,13 +11,14 @@ from src.env import device, dtype
 from src.data.ml import Dataset
 
 
-def evaluate(l, model):
+def evaluate_accuracy(l, model):
     num_correct = 0
     num_samples = 0
-    model.eval()  # set model to evaluation mode
+
+    model.eval()
     with torch.no_grad():
         for x, y in l:
-            x = x.to(device=device, dtype=dtype)  # move to device, e.g. GPU
+            x = x.to(device=device, dtype=dtype)
             y = y.to(device=device, dtype=torch.long)
             scores = model(x)
             _, preds = scores.max(1)
@@ -28,6 +30,28 @@ def evaluate(l, model):
     return acc
     # roc_auc = metrics.roc_auc_score
     # roc_auc(y, pred)
+
+
+def evaluate_f1(d: Dataset, model):
+    X, y = d.val
+
+    model.eval()  # set model to evaluation mode
+    with torch.no_grad():
+        x = X.to(device=device, dtype=dtype)
+        y = y.to(device=device, dtype=torch.long)
+        scores = model(x)
+        _, preds = scores.max(1)
+
+    y = y.cpu()
+    preds = preds.cpu()
+
+    results = metrics.precision_recall_fscore_support(y, preds)
+    df = pd.DataFrame(
+        data=results,
+        columns=['nonfood', 'food'],
+        index=['precision', 'recall', 'f1', 'support'])
+
+    return df
 
 
 def train(
@@ -86,10 +110,14 @@ def train(
             del x, y, scores
             torch.cuda.empty_cache()
 
-        accuracy = evaluate(l_validate, model)
+        accuracy = evaluate_accuracy(l_validate, model)
 
         losses.append(round_loss / num_batches)
         accuracies.append(accuracy)
+
+    p_r_f1_s = evaluate_f1(dataset, model)
+
+    print(p_r_f1_s)
 
     print("\nDone training!\n")
     return losses, accuracies
