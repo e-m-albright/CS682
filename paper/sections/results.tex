@@ -10,14 +10,18 @@ the challenges overcome with the 3d convolutional model architecture.
 
 \subsection{Model Architecture}\label{subsec:model-arch}
 
-the project explored minimally the hyperparameters of the chosen model architectures
-chiefly was finding the right learning rate for the given normalized data to the model
-typically 1e-2 to 1e-4 worked, with learning rates on the order of 1e-3 being best.
+I explored the available hyperparameters of the chosen model architectures to a minor degree, focusing on
+establishing optimal learning rates with the chosen optimizer and model, with the given normalized data.
+
+Typically 1e-2 to 1e-4 worked, with learning rates on the order of 1e-3 being best for both ResNet style convolutional
+networks.
+
 Stochastic Gradient Descent with nesterov momentum on Cross Entropy Loss performed very well.
 Other optimizers like Adam and loss metrics like NLL Loss explored were either on par or worse and thus not
 further utilized.
 
-None of my attempted customizations to the ResNet architecture netted any improvements.
+None of my attempted customizations to the ResNet architecture netted any improvements, including expanding filter sizes
+or adding normalization layers.
 
 \subsection{Subject individuality}\label{subsec:subjects-individ}
 
