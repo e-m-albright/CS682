@@ -1,0 +1,27 @@
+\section{Introduction}\label{sec:introduction}
+
+Neuroimaging presents fertile grounds for deep learning applications, with myriad interesting real world benefits
+for mental health research and disease diagnosis.
+High dimensional, massive datasets, with intertwining patterns of activity and structure in three or four
+dimensions, are a lot to manage by hand.
+
+Classification of activity and structures should come quite naturally with deep learning practices.
+Previous works include the development of Restricted Boltzmann Machines, and Deep Belief Networks~\cite{plis2014deep},
+yet often only as a proof of concept, and limited to two dimensions.
+Others are working now to try and find universal architectures for most
+neuro-imaging tasks~\cite{henschel2019fastsurfer}, though it seems this is still far from a solved
+application with satisfactory performances across the board.
+
+Of more interest to myself, deep learning networks in their proven capacity to segment images based on what entities
+they identify in classification could surely be adopted to highlight what patterns of activity have informed their
+own decision making and perhaps clue researchers in to overlooked details.
+
+Here we'll discuss creating highly accurate classifiers using both 2d and 3d convolutional networks
+to learn in the typical manner low level filters, here specifically created for brain scans of spatial activity, using
+no pretraining on unrelated datasets and no neuro-imaging feature analysis or reduction~\cite{shi2018feature},
+letting the model learn for itself what is important so that it can teach the observer instead.
+
+Following this we'll discuss what this may mean for future works in the highly valuable ability to adapt the classifiers
+to the new, related task of unsupervised segmentation in 3 dimensions~\cite{shu2016unsupervised} to mirror what has been
+a fruitful field of 2d identification of tumors~\cite{akkus2017deep} for this specific application of telling brain
+activity patterns.
