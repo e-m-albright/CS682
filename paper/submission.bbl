@@ -1,4 +1,4 @@
-\begin{thebibliography}{1}\itemsep=-1pt
+\begin{thebibliography}{10}\itemsep=-1pt
 
 \bibitem{akkus2017deep}
 Z.~Akkus, A.~Galimzianova, A.~Hoogi, D.~L. Rubin, and B.~J. Erickson.
@@ -6,17 +6,61 @@ Z.~Akkus, A.~Galimzianova, A.~Hoogi, D.~L. Rubin, and B.~J. Erickson.
   directions.
 \newblock {\em Journal of digital imaging}, 30(4):449--459, 2017.
 
+\bibitem{brett_matthew_2019_3544468}
+M.~Brett, C.~J. Markiewicz, M.~Hanke, M.-A. Côté, B.~Cipollini, P.~McCarthy,
+  C.~P. Cheng, Y.~O. Halchenko, M.~Cottaar, S.~Ghosh, E.~Larson, D.~Wassermann,
+  S.~Gerhard, G.~R. Lee, H.-T. Wang, E.~Kastman, A.~Rokem, C.~Madison, F.~C.
+  Morency, B.~Moloney, M.~Goncalves, C.~Riddell, C.~Burns, J.~Millman,
+  A.~Gramfort, J.~Leppäkangas, R.~Markello, J.~J. van~den Bosch, R.~D.
+  Vincent, H.~Braun, K.~Subramaniam, D.~Jarecka, K.~J. Gorgolewski, P.~R.
+  Raamana, B.~N. Nichols, E.~M. Baker, S.~Hayashi, B.~Pinsard, C.~Haselgrove,
+  M.~Hymers, O.~Esteban, S.~Koudoro, N.~N. Oosterhof, B.~Amirbekian,
+  I.~Nimmo-Smith, L.~Nguyen, S.~Reddigari, S.~St-Jean, E.~Panfilov,
+  E.~Garyfallidis, G.~Varoquaux, J.~Kaczmarzyk, J.~H. Legarreta, K.~S. Hahn,
+  O.~P. Hinds, B.~Fauber, J.-B. Poline, J.~Stutters, K.~Jordan, M.~Cieslak,
+  M.~E. Moreno, V.~Haenel, Y.~Schwartz, B.~Thirion, D.~Papadopoulos~Orfanos,
+  F.~Pérez-García, I.~Solovey, I.~Gonzalez, J.~Palasubramaniam, J.~Lecher,
+  K.~Leinweber, K.~Raktivan, P.~Fischer, P.~Gervais, S.~Gadde, T.~Ballinger,
+  T.~Roos, V.~R. Reddam, and freec84.
+\newblock nipy/nibabel: 3.0.0rc1, Nov. 2019.
+
+\bibitem{hara3dcnns}
+K.~Hara, H.~Kataoka, and Y.~Satoh.
+\newblock Can spatiotemporal 3d cnns retrace the history of 2d cnns and
+  imagenet?
+\newblock In {\em Proceedings of the IEEE Conference on Computer Vision and
+  Pattern Recognition (CVPR)}, pages 6546--6555, 2018.
+
+\bibitem{he2016deep}
+K.~He, X.~Zhang, S.~Ren, and J.~Sun.
+\newblock Deep residual learning for image recognition.
+\newblock In {\em Proceedings of the IEEE conference on computer vision and
+  pattern recognition}, pages 770--778, 2016.
+
 \bibitem{henschel2019fastsurfer}
 L.~Henschel, S.~Conjeti, S.~Estrada, K.~Diers, B.~Fischl, and M.~Reuter.
 \newblock Fastsurfer--a fast and accurate deep learning based neuroimaging
   pipeline.
 \newblock {\em arXiv preprint arXiv:1910.03866}, 2019.
 
+\bibitem{paszke2017automatic}
+A.~Paszke, S.~Gross, S.~Chintala, G.~Chanan, E.~Yang, Z.~DeVito, Z.~Lin,
+  A.~Desmaison, L.~Antiga, and A.~Lerer.
+\newblock Automatic differentiation in {PyTorch}.
+\newblock In {\em NeurIPS Autodiff Workshop}, 2017.
+
 \bibitem{payan2015predicting}
 A.~Payan and G.~Montana.
 \newblock Predicting alzheimer's disease: a neuroimaging study with 3d
   convolutional neural networks.
 \newblock {\em arXiv preprint arXiv:1502.02506}, 2015.
+
+\bibitem{scikit-learn}
+F.~Pedregosa, G.~Varoquaux, A.~Gramfort, V.~Michel, B.~Thirion, O.~Grisel,
+  M.~Blondel, P.~Prettenhofer, R.~Weiss, V.~Dubourg, J.~Vanderplas, A.~Passos,
+  D.~Cournapeau, M.~Brucher, M.~Perrot, and E.~Duchesnay.
+\newblock Scikit-learn: Machine learning in {P}ython.
+\newblock {\em Journal of Machine Learning Research}, 12:2825--2830, 2011.
 
 \bibitem{plis2014deep}
 S.~M. Plis, D.~R. Hjelm, R.~Salakhutdinov, E.~A. Allen, H.~J. Bockholt, J.~D.
@@ -31,11 +75,22 @@ S.~Shi and F.~Nathoo.
 \newblock In {\em 2018 4th International Conference on Big Data and Information
   Analytics (BigDIA)}, pages 1--5. IEEE, 2018.
 
+\bibitem{shu2016unsupervised}
+Z.~Shu, C.~Qi, S.~Xin, C.~Hu, L.~Wang, Y.~Zhang, and L.~Liu.
+\newblock Unsupervised 3d shape segmentation and co-segmentation via deep
+  learning.
+\newblock {\em Computer Aided Geometric Design}, 43:39--52, 2016.
+
 \bibitem{smeets2013allured}
 P.~A. Smeets, F.~M. Kroese, C.~Evers, and D.~T. de~Ridder.
 \newblock Allured or alarmed: counteractive control responses to food
   temptations in the brain.
 \newblock {\em Behavioural brain research}, 248:41--45, 2013.
 
+\bibitem{tran2018closer}
+D.~Tran, H.~Wang, L.~Torresani, J.~Ray, Y.~LeCun, and M.~Paluri.
+\newblock A closer look at spatiotemporal convolutions for action recognition.
+\newblock In {\em Proceedings of the IEEE conference on Computer Vision and
+  Pattern Recognition}, pages 6450--6459, 2018.
 
 \end{thebibliography}

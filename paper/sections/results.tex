@@ -3,7 +3,7 @@
 With a complete experimental set-up, benchmark performance was established using the simple models ranging from the
 SVM to the basic fully-connected network, at around 70-80\%.
 Both 2 dimensional and 3 dimensional convolutional networks were able to surpass the benchmarks,
-attaining 95\%+ and 90\%+ accuracy respectively.
+attaining 95\%+ accuracy.
 
 The stretch goal of region highlighting using unsupervised segmentation proved infeasible for this project timeframe, given
 the challenges overcome with the 3d convolutional model architecture.
@@ -12,16 +12,33 @@ the challenges overcome with the 3d convolutional model architecture.
 
 the project explored minimally the hyperparameters of the chosen model architectures
 chiefly was finding the right learning rate for the given normalized data to the model
-typically 1e-2 to 1e-4 worked, with 1e-3 being best, and decay being very very helpful
-model quite sensitive to adjustments
+typically 1e-2 to 1e-4 worked, with learning rates on the order of 1e-3 being best.
+Stochastic Gradient Descent with nesterov momentum on Cross Entropy Loss performed very well.
+Other optimizers like Adam and loss metrics like NLL Loss explored were either on par or worse and thus not
+further utilized.
 
-- scheduler / hyperparams / diff architectures (just go with res3d, res2d+1d, mix three types
+None of my attempted customizations to the ResNet architecture netted any improvements.
 
-\subsection{Scope of Number of Subjects}\label{subsec:num-subjects}
+\subsection{Subject individuality}\label{subsec:subjects-individ}
 
-inclusion of more ppts/subjects means more training time (val/test are of same patients,
-hence more individual brain shapes means more general, but longer to learn)
-20 epochs to see liftoff of 55% with 10 ppts, vs quicker with 6ppts
+Interestingly, performance of models on subjects not included in the training run was subpar.
+For example, a model trained to 95\% accuracy on 6 subjects alone would fair closer to 60\% on 6 new subjects.
+I speculate this is not overly worrisome, and a consequence of using such a small handful of subjects.
+Better generalizability seems likely given an investment in much larger machinery or methodology capable of handling
+more subjects, or better normalization practices.
+One exploration of the data revealed by far most of the variance comes at the perimeter of the cortex suggesting slightly
+varied sizes of brains not overlapping perfectly.
+Convolutional networks should be able to tackle this dilemma with no problem but perhaps the small dataset makes
+spatial and orientation noise more consequential.
+
+\subsection{Training Progress}\label{subsec:training-prog}
+
+Generally, training catches within about 20 epochs, learning to differentiate better than chance on 2
+dimensional data~\ref{fig:2d_cold}, taking noticeably longer for 3 dimensional data~\ref{fig:3d_cold} to catch up,
+as there's presumably more nuance to learn.
+The learning rate may seem fairly aggressive~\ref{fig:cold_500_loss.png}
+and takes one step back for every two steps forward, but overall produces
+more competitive results than a gentler learning rate.
 
  \begin{figure}
   \includegraphics[width=\linewidth]{images/2d_cold.png}
@@ -29,12 +46,30 @@ hence more individual brain shapes means more general, but longer to learn)
   \label{fig:2d_cold}
 \end{figure}
 
+ \begin{figure}
+  \includegraphics[width=\linewidth]{images/3d_cold.png}
+  \caption{Cold-Start 3D Training Progress}
+  \label{fig:3d_cold}
+\end{figure}
+
+ \begin{figure}
+  \includegraphics[width=\linewidth]{images/cold_500_loss.png}
+  \caption{Cold-Start Training Progress Loss}
+  \label{fig:cold_500_loss.png}
+\end{figure}
+
 \subsection{Warm Starts}\label{subsec:warm-starts}
-saving model parameter dict, loading and training again
-wowee good stuff, hope to use a LR scheduler in the future to try to control this better?
-surprisingly bad results on warm starting expansion to new subjects - old same subjects takes a little while to stabilize
-but it gets back to 83% without much fuss, probably LR is a little high to start with and the decay helps a lot.
-bounces down for a while, bounces up for a while. breaking 90% which is very cool, might mean warm start has best potential
+
+Saving the model parameters and training again on a new subset of subjects or even resuming learning
+on the same division worked wonderfully.
+
+Getting the model to a stable, low 80\% performance leaves us in an excellent place to begin aggressively learning again.
+
+With this method performances of over 95\%~\ref{fig:2d_warm} are common.
+
+As mentioned before however, higher performances are typically seen on the same subject, though it doesn't take
+long for the model to adapt to the new group of subjects for training, but of course it sacrifices performance on the
+previous grouping to do so.
 
  \begin{figure}
   \includegraphics[width=\linewidth]{images/2d_warm.png}
@@ -43,41 +78,36 @@ bounces down for a while, bounces up for a while. breaking 90% which is very coo
 \end{figure}
 
 \subsection{3 Dimensions}\label{subsec:3-dimensions}
-- 3d CNN - typically meant for video classification using time as the third axis,
-here we are not using time, though that is a dimension we have access to,
-though doesn't make sense for this experiment/project to try to add in
-- https://pytorch.org/docs/stable/torchvision/models.html#video-classification
 
+One of the biggest challenges of this endeavor has been coping with the computational demands that the third
+dimension adds.
+Video data is notoriously large, and now I've seen 3d CNN's can be as well.
+Our application here substitutes time for a third spatial axis, and does seem to be a richer dataset to draw from for
+classification.
+Training on a larger, more complex dataset does feel more challenging as well, with training taking longer to catch on
+to something productive.
 
-okay it works, and has potential, certainly given the data is richer to be the best, but wow it's frustratingly slow
-findings: 3d is cool, but crazy prohibitively slow and not much better than 2d without more refinements. IMHO theres
-promise still in exploring it, but given the inexcusable runtime and datasize 2d is probably worth more investment
-unless better hardware or serious effort is expended in getting it differentiable
-
- \begin{figure}
-  \includegraphics[width=\linewidth]{images/3d_cold.png}
-  \caption{Cold-Start 3D Training Progress}
-  \label{fig:3d_cold}
-\end{figure}
-wrestling with memory constraints (batch size / 3d data huge for cpu/gpu, dataset pretty large in general for ram) slow learning, tapering off learning
-different styles of 1d (unfurl 3d, 2d) 2d (mean flattened, one slice) 3d (scale, orig)
-LR explorations
-
-future works
-better gpu / computer might be important, the 3d models are real fucking beasts to train, and their data is large as fuck
-model ensemble (free extra few percent perf)
-
-
-
-"none of my alterations to the model architecture worked that well, most did nothing, a few broke things, could still poke around more though"
-graphs from 2d training, 3d takes legit 2-3 hours for 200 epochs on 6 subjects with 5./6 & 7. / 2.
-batch_size and interpolation hard to juggle too?
-3d feels like "luck" plays a big part of getting training to catch/start
-seems like scaling down is pretty important and I have better luck with larger batch sizes (meaning scale down is crucial) wonder if aggressive scale down is worthwhile, like over 3./4, image gets real grainy real fast)
-
-cut batch size to avoid scaling down images (TRIED NO BUENO?)
+Unfortunately, I've found iterating with 3 dimensional models to be much harder than 2d which makes refinement also a
+bit of a challenge.
+Where training may take 15 minutes with a 2d CNN, it might be 5 hours or more with a 3d CNN, and the limitations on the
+quality and abundance of the dataset size kick in much faster than for 2d.
+The dataset is already a fairly conservative low-grade rendering of the brain and aggresive interpolation cuts into
+performance directly.
+Additionally, lowering the batch size is very detrimental to performance, with at least 64 images being critical to
+learning generalizable patterns at each step in an epoch.
+However, what I have seen in working with the 3d CNN's is that they are very performant, achieving on par or
+3 to 4\% higher classification accuracy compared to their 2d counterparts, and responding encouragingly as well to warm-starts,
+to which I'm very pleased.
 
 \subsection{Performance Measures}\label{subsec:performance}
+
+Here I examine one highly performant 2d convolutional network in more detail.
+Thankfully it is a well balanced model, with seemingly high intuitive understanding of the differentiable characteristics
+of brain activity, as it's highly accurate, and highly confident in it's decisions.
+
+While I have been able to tweak the model to exceed this accuracy, this is in my opinion the most balanced
+run observed as typically the model begins to favor performance on one class over the other despite near
+equal representation.
 
  % P-R-F1-S
 \begin{center}
@@ -107,8 +137,3 @@ Support & 214 & 221 \\ [1ex]
 \end{tabular}
 \end{center}
 
-Can get a little higher but these are already encouraging numbers (96 seen) often the model starts leaning a little
-one way or the other and this was one of the most balanced runs I've seen
-
-I'm a little unclear about the reliability of my data labeling, so I'm happy with this result, I'd be stoked
-to reproduce on 3d, and trusting the model this much, open the door to segmentation
