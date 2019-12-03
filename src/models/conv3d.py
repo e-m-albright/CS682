@@ -10,7 +10,7 @@ from torchvision.models import video
 
 from src.data.ml import Dataset
 from src.utils import hyper
-from src.utils.training import train
+from src.utils import train
 
 
 def optimizer(model, learning_rate: float = 1e-2):
@@ -32,6 +32,9 @@ def model(*args, **kwargs):
 
 # -----------------------------------------
 # Sourced from torchvision.models.video
+#
+# Code pulled in for convenience of customization
+# especially in altering the number of channels
 # -----------------------------------------
 class Conv3DSimple(nn.Conv3d):
     def __init__(self,
@@ -338,7 +341,7 @@ def r2plus1d_18(**kwargs):
 #     # model = conv3d.Net(dataset.dimensions)
 #     model = r3d_18()
 #
-#     train(
+#     train.train(
 #         model,
 #         optimizer(model, learning_rate=1e-2),
 #         criterion(),

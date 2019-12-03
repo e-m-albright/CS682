@@ -46,6 +46,9 @@ def model(*args, **kwargs):
 
 # -----------------------------------------
 # Sourced from torchvision.models.resnet
+#
+# Code pulled in for convenience of customization
+# especially in altering the number of channels
 # -----------------------------------------
 class SingleChannelResNet(nn.Module):
 
@@ -147,7 +150,7 @@ class SingleChannelResNet(nn.Module):
 
 def run(iargs):
     dimensions = '2d'
-    learning_rate = 1e-3
+    learning_rate = 1e-3 if iargs.learning_rate is None else iargs.learning_rate
 
     # name doesn't fully convey but helpful enough to recall most details
     name = "conv_{}_s{}_lr{}_e{}".format(

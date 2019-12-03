@@ -11,8 +11,7 @@ import torch.optim as optim
 
 from src.data.ml import Dataset
 from src.defs.layers import flatten, Flatten
-from src.utils import plotting
-from src.utils.training import train
+from src.utils import train, plot
 
 
 # def model(idim, hdim: int = 300):
@@ -82,7 +81,7 @@ def run(iargs):
 
     model = Net(dataset.dimensions)
 
-    losses, accuracies = train(
+    losses, accuracies = train.train(
         model,
         optimizer(model, learning_rate=1e-1),
         criterion(),
@@ -92,5 +91,5 @@ def run(iargs):
     )
 
     if iargs.plot:
-        plotting.plot_loss(losses)
-        plotting.plot_accuracies(accuracies)
+        plot.plot_loss(losses)
+        plot.plot_accuracies(accuracies)

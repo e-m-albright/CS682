@@ -27,18 +27,33 @@
 %-------------------------------------------------------------------------
 \title{Deep Learning for 3D Brain Activity Scans}
 
-\author{Evan Albright\\
+\author{Anonymized for Peer Review\\
 University of Massachusetts Amherst\\
 140 Governors Dr, Amherst, MA 01002\\
-{\tt\small ealbright@umass.edu}
+{\tt\small @umass.edu}
 }
 
 \maketitle
 %\thispagestyle{empty}
 
+% ----------------------------------------------------------------------
+% ABSTRACT
 %-------------------------------------------------------------------------
 \begin{abstract}
-   Abstract placeholder (sub 300 words)
+ Analyzing the brain's activity patterns starts with identifying known patterns of well established structures,
+ typically observed by human oversight in two dimensions, which may miss subtle, barely visible but useful indicators,
+ and limit the ability to stitch together patterns across a third dimension.
+
+ Deep learning's ability to decipher and learn from such nearly impossible patterns in massive datasets,
+ imperceptible to preliminary observation makes it an excellent candidate to explore and teach us about
+ overlooked patterns of activity.
+
+ Here I showcase convolutional network's ability to correctly classify uncleaned activity data from a passive
+ image viewing experiment aimed at triggering activity in particular regions of the brain controlling reward and
+ restraint, using the data in both 2d and 3d to explore the merits of adapting video-processing techniques meant
+ to apply across time to a third spatial dimension and discuss adapting this to unsupervised segmentation to see
+ what the network can teach us from its findings.
+
 \end{abstract}
 
 % ----------------------------------------------------------------------
@@ -52,7 +67,7 @@ dimensions, are a lot to manage by hand.
 
 Classification of activity and structures should come quite naturally with deep learning practices.
 Previous works include the development of Restricted Boltzmann Machines, and Deep Belief Networks~\cite{plis2014deep},
-yet often only as a proof of concept.
+yet often only as a proof of concept, and limited to two dimensions.
 Others are working now to try and find universal architectures for most
 neuro-imaging tasks~\cite{henschel2019fastsurfer}, though it seems this is still far from a solved
 application with satisfactory performances across the board.
@@ -61,21 +76,20 @@ Of more interest to myself, deep learning networks in their proven capacity to s
 they identify in classification could surely be adopted to highlight what patterns of activity have informed their
 own decision making and perhaps clue researchers in to overlooked details.
 
-My ambition is to create a highly accurate 3d convolutional network to first classify, then segment brain scans to
-help with my specific application of neuroimaging.
+Here we'll discuss creating highly accurate classifiers using both 2d and 3d convolutional networks
+to learn in the typical manner low level filters, here specifically created for brain scans of spatial activity, using
+no pretraining on unrelated datasets and no neuro-imaging feature analysis or reduction~\cite{shi2018feature},
+letting the model learn for itself what is important so that it can teach the observer instead.
 
-I may also attempt to explore feature analysis and reduction which has been shown to
-help~\cite{shi2018feature} with deep learning tasks, if only to manage the challenging
-dimensionality of their 3d inputs.
-
-
+Following this we'll discuss what this may mean for future works in the highly valuable ability to adapt the classifiers
+to the new, related task of unsupervised segmentation in 3 dimensions~\cite{shu2016unsupervised} to mirror what has been
+a fruitful field of 2d identification of tumors~\cite{akkus2017deep} for this specific application of telling brain
+activity patterns.
 
 % ----------------------------------------------------------------------
-% PROBLEM STATEMENT
+% BACKGROUND / RELATED
 % ----------------------------------------------------------------------
-\section{Problem Statement}\label{sec:problem-statement}
-
-(BACKGROUND / RELATED)
+\section{Background}\label{sec:background}
 
 The dataset to be used is a set of neuro-imaging scans from a cohort of 30 healthy, young women in the
 Netherlands circa 2013 who were presented with various grids of images featuring
@@ -84,77 +98,142 @@ The foods were specifically types of calorically dense, tempting foods, which th
 have formed restraint with given their success in maintaining healthy body mass indices.
 The experiment was meant to highlight brain structures roles in anticipated rewards from consuming delicious foods,
 balanced against the hypothesized activation of restraints.
+
 In neuro-imaging, this task is known as passive image viewing.
 
 Given the quite important role of food and willpower in our lives, the activation patterns are likely to be powerful
 and distinguishable from neutral objects which we haven't evolved to be nearly as concerned with.
-This combination gives me high hopes of success in this specific application of learning to classify the viewed
-objects through brain activations of the subjects.
-
-I hope given the clarity in patterns in the brain scans, that I can develop a neural network to highlight what
-features and locations in the brain scans have been helpful in informing the decisions of classification, in the
-hope that such methods could be adapted to harder tasks in the future.
+This combination makes this an excellent selection for a proof of concept application of deep learning as the chances
+of success on a less subtle activation pattern, observable to trained researchers, are quite high.
+This specific application then can serve as a jumping off point for future works where the activity patterns are less
+distinguishable, and may be an interesting addition to the works in brain-pattern controlled prosthetics.
+This dataset is also ideal as it comes with a fairly usable ground-truth labeling mechanism, as I am not currently
+investigating the capacity for unsupervised differentiation.
 
 The dataset can be found from the excellent
 OpenNeuro project here: \url{https://openneuro.org/datasets/ds000157/versions/00001}
-It consists of a survey detailing the relationship of each subject with food and diet taken after the experimental
-proceedings, and the core data of two modalities of brain imaging: a single high resolution T1w brain scan,
-and time series of bold scans of about 370-375 scans, which encompasses the approximately 10 minute experiment
-in its entirety.
-The bold scans are quite sizeable given the number of them, however they are a relatively low resolution, consisting
-of 64 sagital by 64 coronal by 30 axial scans.
+
+The dataset follows the BIDS (Brain Imaging Data Structure) layout adopted by many neuroscience researchers.
+It consists of a survey detailing the relationship of each of the 30 subjects with food and diet taken after the experimental
+proceedings, and the core data of two modalities of brain imaging: a single high resolution T1w Modality fMRI scan seen in figure~\ref{fig:ortho-t1w},
+and time series of 370-375 BOLD Modality fMRI scans seen in figure~\ref{fig:ortho-bold}, encompassing approximately 10 minutes
+capturing brain activity of the subjects during their exposure to the experimental triggers.
+
+The bold scans are quite sizeable as far as datasets go, given the number of each per subject,
+however they are a relatively low resolution, consisting
+of 64 sagital by 64 coronal by 30 axial scans, with only a single image channel.
+
+The activation is measured in a positive magnitude visible in figure~\ref{fig:ex_stat_map}, through a helper method in a neuro-imaging specialized
+image handling library ~\cite{brett_matthew_2019_3544468}.
+
+I had to manually infer pairings of the scans with the experimental phase for classification training given the events log associated
+with each subject and the advertised scan times from the paper.
+While the data does appear healthy, there may be some discrepancies of interpretation which would warrant future investigation if the
+performance on this particular experiment was the primary focus.
 
 You may review the full experimental paper as well here: \url{http://www.pamitc.org/documents/mermin.pdf}.
 
-You may find this project repository here: \url{https://github.com/e-m-albright/CS682}
+You may find this project repository here: (personal github link removed for anonymity)
 Reading the paper is critical to understanding the format of the dataset, however I hope I will provide enough
 abstraction in the project repository for you to be freed of that challenge should you wish to have a look around.
 
+\begin{figure}
+  \includegraphics[width=\linewidth]{images/orthoview_bold.png}
+  \caption{Bold Modality Low-Res 3d Experimental Scans of Subject Brain}
+  \label{fig:ortho-bold}
+\end{figure}
 
+\begin{figure}
+  \includegraphics[width=\linewidth]{images/example_stat_map.png}
+  \caption{Activity Measures from Bold Scans}
+  \label{fig:ex_stat_map}
+\end{figure}
 
-% ----------------------------------------------------------------------
-% TECHNICAL APPROACH
-% ----------------------------------------------------------------------
-\section{Technical Approach}\label{sec:technical-approach}
-I intend to explore the efficacy of 3d convolutional networks which have been shown to have a slight performance
-edge on 2d convolutions~\cite{payan2015predicting}.
-Given the nature of the input images being 3d brain scans this makes intuitive sense and could allow for much more
-interesting patterns of brain activity and structuring being recognized.
-
-As for the deeper architecture, I'm hoping to imitate some of the more successful networks like VGG or ResNet,
-however I wouldn't be surprised if they don't adapt well to this particular application, especially given how
-interesting and important it could be to keep the input data in a three dimensional format.
-
-It is my hope that I can also learn from other developments of object detection to see what regions in the
-brain become active for a particular classification, like Faster R-CNN
-
-\subsection{Novelty}\label{subsec:novelty}
-
-I have not seen any application of classification or object segmentation to neuroimaging in 3d
-on brain activity patterns.
-I have seen some works which I hope to leverage with similar aims like that of structural identification
-for tumors, in two dimensions~\cite{akkus2017deep}.
-However at the very least I hope to produce a very successful network on my chosen problem first and foremost rather
-than assume I am the only person to ever think of something as intuitive as bringing neural networks to bear
-on neuro-imaging tasks.
-
-I hope to find a methodology of first classifying correctly the brain scans, improve accuracy as much as possible,
-and adapt the approach into tools for identifying important regions of activity in the
-brain which are being utilized for classification.
-
-I am not chiefly focused on coping with the challenges of memory but it may become too important to overlook.
-Each dataset input is a $64 \times 64 \times 30$ slice of floats, for which we've got
-about $375 scans \times 30 subjects$ total.
-In my work on preliminary results I have already been confronted by the limitations of my current machine and have
-been trying working around the issue until I am ready to attempt to resolve it.
-This may be an unavoidable area to simultaneously try to innovate for the field of
-neuro-imaging analysis with deep learning
 
 
 % ----------------------------------------------------------------------
-% INTERMEDIATE RESULTS
+% APPROACH
 % ----------------------------------------------------------------------
-\section{Intermediate Results}\label{sec:intermediate-results}
+\section{Approach}\label{sec:approach}
+
+Beginning with SKLearn~\cite{scikit-learn} data readiness was proven with moderately successful classification using
+a simple SVM and then the SKLearn Multi-Layer-Perceptron neural network, getting 70-80\% accuracy, sufficing the
+initial sanity check that deep learning would be ready to work on.
+
+% TODO these are relevant citations, right?
+Leveraging PyTorch~\cite{paszke2017automatic} first a framework for learning was likewise vetted using a simple fully
+connected shallow network, graduating to the state of the art convolutional networks, chiefly focussed
+on the ResNet~\cite{he2016deep} architecture styles, which have been developed for video classification~\cite{tran2018closer}
+utilizing 3 dimensional convolutions~\cite{hara3dcnns} much in the way 2 dimensional convolutions operate, which have
+been shown to hold a slight edge on 2 dimensions~\cite{payan2015predicting} in other applications.
+
+
+\subsection{Data Preparation}\label{subsec:data-preparation}
+
+First as the data was not prepared for classification, critical cleaning include subtracting the mean image to better
+highlight meaningful variance, and standardizing the data between 0 and 1.
+
+Given the nature of the input images being 3d brain scans it's intuitive that examining the brain in 3 dimensions
+allows for much more interesting patterns of brain activity and structuring being recognized.
+
+This comes with a substantial cost however, as the extra dimension explodes the memory demands of the input data, and
+the number of trainable parameters for the models.
+Many of the recommendations following will vary based on the particular hardware, but with a 4GB GPU I had to be quite
+careful about batch-sizes to not over-allocate memory.
+To combat this, first, a relatively conservative amount of blank space is cropped from the images, halving the total footprint.
+Following this, in order to use a batch-size of 64, I interpolate images to approximately $\frac{5}{6}$ their original dimension
+
+In addition, I typically do not use the full cohort of 30 subjects, as I even encounter some RAM restrictions with the
+full raw dataset consisting of
+$64 sagital \times 64 coronal \times 30 axial \times 32bit floats \times 375 scans \times 30 subjects$ or roughly 5.53 gigabytes
+
+In working with 2 dimensions, omitting the axial dimension for a flat cross section, you'll see the dataset is
+$\frac{1}{30}$ the size and hence, much more manageable.
+
+
+\subsection{Examining the Data}\label{subsec:examining-data}
+
+Two fully processed, correctly classified brain scans are presented in the figure~\ref{fig:comparison}
+which pose a daunting challenge to human labelers.
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{images/nf_f_hard_comparison.png}
+  \caption{Nonfood-Stimuli \& Food-Stimuli Respectively from the same Subject}
+  \label{fig:comparison}
+\end{figure}
+
+\subsection{Model Selection}\label{subsec:model-selection}
+
+For the primary focus of comparing and improving classification accuracy using 2d and 3d architectures, ResNet models
+of the standard 18 layers to 100+ layers are examined, as the ResNet family is both highly competitive, and demonstrated
+in both 2 and 3 dimensions which will help comparisons in exploring the benefits of 3d brain scan usage.
+Video processing typically limits the layers to a more shallow level than that of image processing, as unfortunately as
+with the data, the model parameters explode out of control pretty fast.
+The following parameter counts are from standard ResNet architectures adapted to a single input channel.
+
+\begin{center}
+ \begin{tabular}{||c c c||}
+ \hline
+ - & ResNet-18 2d & ResNet-18 3d \\ [0.5ex]
+ \hline\hline
+ Counts & 11,171,266 & 33,148,482 \\ [1ex]
+ \hline
+ Ratio & 1.0 & 2.97 \\ [1ex]
+ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Comparisons}\label{subsec:comparisons}
+
+Model performance is typically evaluated using accuracy, precision, recall, and AUC metrics, as well as total time to
+train.
+
+
+
+% ----------------------------------------------------------------------
+% RESULTS
+% ----------------------------------------------------------------------
+\section{Results}\label{sec:results}
 At the date of the milestone, I have shown that my experimental set-up is complete to begin
 iterating towards the novel contributions aimed for by this project.
 
@@ -171,147 +250,142 @@ based off of the data.
 I have inferred classification labels from the experimental events timings and the estimated time
 of each complete scan in the dataset.
 
-\subsection{Sanity Checks}\label{subsec:sanity-checks}
-Using the data, I have implemented a very simple, yet effective 80\% accurate SVM classifier to prove the data
-should be ready for use with my chosen deep learning methodologies.
 
-I'm now confident in the classifications of each of the scans (about 375 per subject, for 30 subjects)
+\subsection{Model Architecture}\label{subsec:model-arch}
 
-\subsection{Deep Learning \& Future Works}\label{subsec:deep-learning}
-I have tried feeding the data into very basic neural networks with mixed success, and am in the active process of
-troubleshooting.
-Once I have matched performance with the SVM using an implementation of a reasonable neural network using PyTorch, I
-will begin the process of looking for refinements and innovations alluded to in previous sections, as well as
-transitioning the task to object detection if I can.
-
-
-% ----------------------------------------------------------------------
-% TODO
-% ----------------------------------------------------------------------
-\section{TODO}\label{sec:todo}
-
-NN project
-- 2d hyperparameters, let's use a LR scheduler? LR spikes all over the place still, why?
-
-- 3d CNN - typically meant for video classification using time as the third axis,
-here we are not using time, though that is a dimension we have access to,
-though doesn't make sense for this experiment/project to try to add in
-- https://pytorch.org/docs/stable/torchvision/models.html#video-classification
+the project explored minimally the hyperparameters of the chosen model architectures
+chiefly was finding the right learning rate for the given normalized data to the model
+typically 1e-2 to 1e-4 worked, with 1e-3 being good, and decay being very very helpful
+model quite sensitive to adjustments
 
 - scheduler / hyperparams / diff architectures (just go with res3d, res2d+1d, mix three types
-- cut batch size to avoid scaling down images (TRIED NO BUENO?)
 
-be sure to talk about everything in paper
-
-normalization/mean image
-interpolation
-wrestling with memory constraints (batch size / 3d data huge for cpu/gpu, dataset pretty large in general for ram) slow learning, tapering off learning
-different styles of 1d (unfurl 3d, 2d) 2d (mean flattened, one slice) 3d (scale, orig)
-LR explorations
-sanity checks on brain image data, impossible for me to spot the differences
-
-batch_size and interpolation hard to juggle too?
-3d feels like "luck" plays a big part of getting training to catch/start
-seems like scaling down is pretty important and I have better luck with larger batch sizes (meaning scale down is crucial) wonder if aggressive scale down is worthwhile, like over 3./4, image gets real grainy real fast)
-
-images:
-LR / accuracy measures, of diff approaches
-hi res, mid res, interpolated down res brain scan examples,
-2d slice example
-total training time? num features comparison
-average slice image
-graphs from 2d training, 3d takes legit 2-3 hours for 200 epochs on 6 subjects with 5./6 & 7. / 2.
+\subsection{Scope of Number of Subjects}\label{subsec:num-subjects}
 
 inclusion of more ppts/subjects means more training time (val/test are of same patients,
 hence more individual brain shapes means more general, but longer to learn)
 20 epochs to see liftoff of 55% with 10 ppts, vs quicker with 6ppts
 
-image segmentation attempt?
-saliency maps?
-filter views?
+ \begin{figure}
+  \includegraphics[width=\linewidth]{images/2d_cold.png}
+  \caption{Cold-Start 2D Training Progress}
+  \label{fig:2d_cold}
+\end{figure}
 
-torch save models - can eval that way
-host for downloads?
+\subsection{Warm Starts}\label{subsec:warm-starts}
+saving model parameter dict, loading and training again
+wowee good stuff, hope to use a LR scheduler in the future to try to control this better?
+surprisingly bad results on warm starting expansion to new subjects - old same subjects takes a little while to stabilize
+but it gets back to 83% without much fuss, probably LR is a little high to start with and the decay helps a lot.
+bounces down for a while, bounces up for a while. breaking 90% which is very cool, might mean warm start has best potential
+
+ \begin{figure}
+  \includegraphics[width=\linewidth]{images/2d_warm.png}
+  \caption{Warm-Start 2D Training Progress}
+  \label{fig:2d_warm}
+\end{figure}
+
+\subsection{3 Dimensions}\label{subsec:3-dimensions}
+- 3d CNN - typically meant for video classification using time as the third axis,
+here we are not using time, though that is a dimension we have access to,
+though doesn't make sense for this experiment/project to try to add in
+- https://pytorch.org/docs/stable/torchvision/models.html#video-classification
+
+
+okay it works, and has potential, certainly given the data is richer to be the best, but wow it's frustratingly slow
+findings: 3d is cool, but crazy prohibitively slow and not much better than 2d without more refinements. IMHO theres
+promise still in exploring it, but given the inexcusable runtime and datasize 2d is probably worth more investment
+unless better hardware or serious effort is expended in getting it differentiable
+
+ \begin{figure}
+  \includegraphics[width=\linewidth]{images/3d_cold.png}
+  \caption{Cold-Start 3D Training Progress}
+  \label{fig:3d_cold}
+\end{figure}
+wrestling with memory constraints (batch size / 3d data huge for cpu/gpu, dataset pretty large in general for ram) slow learning, tapering off learning
+different styles of 1d (unfurl 3d, 2d) 2d (mean flattened, one slice) 3d (scale, orig)
+LR explorations
 
 future works
 better gpu / computer might be important, the 3d models are real fucking beasts to train, and their data is large as fuck
 model ensemble (free extra few percent perf)
 
-findings: 3d is cool, but crazy prohibitively slow and not much better than 2d without more refinements. IMHO theres
-promise still in exploring it, but given the inexcusable runtime and datasize 2d is probably worth more investment
-unless better hardware or serious effort is expended in getting it differentiable
 
-PUT BRAIN SCANS IN SUPPLEMENTARY?
 
-abstract > intro > background > related
-methods/approach > results > discussion > references
-6 pages? 7 maybe at most
+"none of my alterations to the model architecture worked that well, most did nothing, a few broke things, could still poke around more though"
+graphs from 2d training, 3d takes legit 2-3 hours for 200 epochs on 6 subjects with 5./6 & 7. / 2.
+batch_size and interpolation hard to juggle too?
+3d feels like "luck" plays a big part of getting training to catch/start
+seems like scaling down is pretty important and I have better luck with larger batch sizes (meaning scale down is crucial) wonder if aggressive scale down is worthwhile, like over 3./4, image gets real grainy real fast)
 
-gradual warm-start improvements?
-variations on models? meh
+cut batch size to avoid scaling down images (TRIED NO BUENO?)
 
-unsupervised segmentation - little hard
+\subsection{Performance}\label{subsec:performance}
 
-surprisingly bad results on warm starting expansion to new subjects - old same subjects takes a little while to stabilize
-but it gets back to 83% without much fuss, probably LR is a little high to start with and the decay helps a lot.
-bounces down for a while, bounces up for a while. breaking 90% which is very cool, might mean warm start has best potential
+ % P-R-F1-S
+\begin{center}
+ \begin{tabular}{||c c c||}
+ \hline
+ - & Nonfood & Food \\ [0.5ex]
+ \hline\hline
+Precision & 0.949074 & 0.958904 \\
+ \hline
+Recall & 0.957944 & 0.950226 \\
+ \hline
+F1 & 0.953488 & 0.954545 \\
+ \hline
+Support & 214 & 221 \\ [1ex]
+ \hline
+\end{tabular}
 
-WORK ON GETTING PARAM NUMBERS AND
-DIFFERENT METRICS (AUC PLEASE, F1 PLEASE)
-2d is enough
+ % ROC-AUC / ACC
+\end{center}
+\begin{center}
+ \begin{tabular}{||c c||}
+ \hline
+ ROC-AUC & Accuracy \\ [0.5ex]
+ \hline\hline
+  0.9847 & 0.954 \\ [1ex]
+ \hline
+\end{tabular}
+\end{center}
 
-Submit your final submission through OpenReview. You will submit a single pdf file:
-A pdf file of your final report
+Can get a little higher but these are already encouraging numbers (96 seen) often the model starts leaning a little
+one way or the other and this was one of the most balanced runs I've seen
 
-(OPTIONAL) supplementary can be concatenated at the end of the final report
-Report. The following is a suggested structure for the report:
-Title, Author(s)
+I'm a little unclear about the reliability of my data labeling, so I'm happy with this result, I'd be stoked
+to reproduce on 3d, and trusting the model this much, open the door to segmentation
 
-Abstract: It should not be more than 300 words
+% ----------------------------------------------------------------------
+% DISCUSSION
+% ----------------------------------------------------------------------
+\section{Discussion}\label{sec:discussion}
 
-Introduction: this section introduces your problem, and the overall plan for approaching your problem
-Background/Related Work: This section discusses relevant literature for your project
-Approach: This section details the framework of your project. Be specific, which means you might want to include equations, figures, plots, etc
-Experiment: This section begins with what kind of experiments you're doing, what kind of dataset(s) you're using, and what is the way you measure or evaluate your results. It then shows in details the results of your experiments. By details, we mean both quantitative evaluations (show numbers, figures, tables, etc) as well as qualitative results (show images, example results, etc).
-Conclusion: What have you learned? Suggest future ideas.
-References: This is absolutely necessary.
-Supplementary Material is not counted toward your 6-8 page limit. It is optional and is supposed to contain less important results/experiments/etc not critical for understanding the main report.
+\subsection{Learning}\label{subsec:learning}
+very cool! I tried spot checking different scans to see if I could tell the difference visually and I really really
+cannot. I think it's encouraging that the model is able to notice impossible to visualize differences and run with it
+this well. It's one thing to differentiate a st. bernard from a siamese cat, but two brain activations I'm not good at
 
-try different architectures - more depth?
-see if we can break 85% to 90%, talk about potential data mislabeling frustration as a barrier to higher results possibly
-
-you are expected to show substantially more experiments and results with NN-related methods
-( :(  lame)
-
-11171266 trainable params in resnet18 2d
-33148482 trainable params in resnet18 3d (about 2.97x)
-
-data size tho -
-30x bigger (30 x 44 x 40) vs (44 x 40)
-
+\subsection{Future Works}\label{subsec:future-works}
+Unsupervised segmentation, especially in 3d would be cool
 Future works
 - could strive to refine 3d more, with more time and compute
 - unsupervised segmentation would be cool
 - find ways to not have to smoosh images for memory?
 - more visualizations? lack of color kinda sucks, saliency is weird, filters prob too
 
-ACTUAL FINAL WORK
+began work on visualization, it didn't lead anywhere useful, 1 channel might be a problem?
 - check out filter viz
 - see about unsupervised
 - try 3d alternative archs? (dont really need to)
-- "none of my alterations to the model architecture worked that well, most did nothing, a few broke things, could still poke around more though"
-- better assessment metrics (f1s, auc)
 
-~\cite{he2016deep} resnet
-~\cite{tran2018closer} 3d/time resnet
-~\cite{hara3dcnns} 3d cnn pt1?
+might want to improve 3d before going on to segmentation,
 
-
-              nonfood        food
-precision    0.893162    0.935323
-recall       0.941441    0.882629
-f1           0.916667    0.908213
-support    222.000000  213.000000
+ \begin{figure}
+  \includegraphics[width=\linewidth]{images/saliency.png}
+  \caption{caption}
+  \label{fig:saliency}
+\end{figure}
 
 % ----------------------------------------------------------------------
 % END
@@ -321,4 +395,24 @@ support    222.000000  213.000000
 \bibliography{project}
 }
 
+% ----------------------------------------------------------------------
+% SUPPLEMENTARY
+% ----------------------------------------------------------------------
+\section{Supplementary Material}\label{sec:supplementary}
+
+Extra material for reference
+
+ \begin{figure}
+  \includegraphics[width=\linewidth]{images/orthoview_t1w.png}
+  \caption{caption}
+  \label{fig:ortho-t1w}
+\end{figure}
+
+ \begin{figure}
+  \includegraphics[width=\linewidth]{images/var_on_cortex_2.png}
+  \caption{caption}
+  \label{fig:cortex-var}
+\end{figure}
+
 \end{document}
+

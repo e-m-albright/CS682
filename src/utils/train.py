@@ -12,6 +12,7 @@ from src.data.ml import Dataset
 
 
 def evaluate_accuracy(l, model):
+    """Intermediate training monitor metric"""
     num_correct = 0
     num_samples = 0
 
@@ -28,11 +29,10 @@ def evaluate_accuracy(l, model):
         print("{:d} / {:d} correct (%{:.2f})".format(num_correct, num_samples, 100 * acc))
 
     return acc
-    # roc_auc = metrics.roc_auc_score
-    # roc_auc(y, pred)
 
 
-def evaluate_f1(d: Dataset, model):
+def evaluate_final(d: Dataset, model):
+    """Final evaluation using the val/test looking at performance of model more in depth"""
     X, y = d.val
 
     model.eval()  # set model to evaluation mode
@@ -40,10 +40,18 @@ def evaluate_f1(d: Dataset, model):
         x = X.to(device=device, dtype=dtype)
         y = y.to(device=device, dtype=torch.long)
         scores = model(x)
+
+        # For AUC
+        probs = F.softmax(scores)
+        # probs = probs.gather(1, y.view(-1, 1)).squeeze()
+        probs = probs[:, 1]  # roc_auc works oddly
+
+        # For F1
         _, preds = scores.max(1)
 
     y = y.cpu()
     preds = preds.cpu()
+    probs = probs.cpu()
 
     results = metrics.precision_recall_fscore_support(y, preds)
     df = pd.DataFrame(
@@ -51,7 +59,9 @@ def evaluate_f1(d: Dataset, model):
         columns=['nonfood', 'food'],
         index=['precision', 'recall', 'f1', 'support'])
 
-    return df
+    auc = metrics.roc_auc_score(y, probs)
+
+    return df, auc
 
 
 def train(
@@ -115,9 +125,10 @@ def train(
         losses.append(round_loss / num_batches)
         accuracies.append(accuracy)
 
-    p_r_f1_s = evaluate_f1(dataset, model)
+    f1, auc = evaluate_final(dataset, model)
 
-    print(p_r_f1_s)
+    print(f1)
+    print("Final AUC: {:.4f}".format(auc))
 
     print("\nDone training!\n")
     return losses, accuracies

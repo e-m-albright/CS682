@@ -1,3 +1,9 @@
+"""
+TODO
+    Saliency isn't looking that great, 1 channel makes it hard to see much I suppose
+    Base code from HW3, might want to tinker more to get more sensible saliency maps
+"""
+
 from matplotlib import pyplot as plt
 
 import torch
